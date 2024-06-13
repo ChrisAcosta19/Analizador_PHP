@@ -1,27 +1,50 @@
 import ply.lex as lex
 
+reserved = {
+   'if' : 'IF',
+   'then' : 'THEN',
+   'else' : 'ELSE',
+   'while' : 'WHILE',
+}
+
 # List of token names.   This is always required
-tokens = (
+tokens = [
+    'FLOAT',
     'INTEGER',
     'PLUS',
     'MINUS',
     'TIMES',
     'DIVIDE',
+    'MOD',
+    'POWER',
     'LPAREN',
     'RPAREN',
-)
+    'ID',
+] + list(reserved.values())
 
 # Regular expression rules for simple tokens
 t_PLUS = r'\+'
 t_MINUS = r'-'
 t_TIMES = r'\*'
 t_DIVIDE = r'/'
+t_MOD = r'%'
+t_POWER = r'\*\*'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
+def t_FLOAT(t):
+    r'-?(\.\d+|\d+\.\d*)'
+    t.value = float(t.value)
+    return t
+
+def t_ID(t):
+    r'\$[a-zA-Z_]\w*'
+    t.type = reserved.get(t.value,'ID')    # Check for reserved words
+    return t
+
 # A regular expression rule with some action code
 def t_INTEGER(t):
-    r'\d+'
+    r'-?\d+'
     t.value = int(t.value)
     return t
 
@@ -39,13 +62,12 @@ def t_error(t):
     print("Illegal character '%s'" % t.value[0])
     t.lexer.skip(1)
 
-
 # Build the lexer
 lexer = lex.lex()
 
 # Test it out
 data = '''
-3 + 4 * 10
+23.45 3 % 4 ** 10
   + -20 *2
 '''
 
