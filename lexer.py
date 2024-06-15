@@ -71,13 +71,12 @@ reserved = {
     'list' : 'LIST',
     'trait' : 'TRAIT',
     'switch' : 'SWITCH',
-    'true' : 'TRUE',
-    'false' : 'FALSE',
     'null' : 'NULL',
 }
 
 # List of token names.   This is always required
 tokens = [
+    # Christopher Acosta
     'ID',
     'NAME',
     'FLOAT',
@@ -90,6 +89,9 @@ tokens = [
     'POWER',
     'LPAREN',
     'RPAREN',
+
+    # Jefferson Eras
+    # Peter Miranda
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
