@@ -125,6 +125,34 @@ tokens = [
     'PHP_CLOSE_TAG',
 
     # Peter Miranda
+    'EQUALS',
+    'PLUS_EQUALS',
+    'MINUS_EQUALS',
+    'TIMES_EQUALS',
+    'DIVIDE_EQUALS',
+    'MOD_EQUALS',
+    'PLUS_PLUS',
+    'MINUS_MINUS',
+
+    # Delimiters
+    'OPEN_TAG',
+    'CLOSE_TAG',
+    'LEFT_BRACE',
+    'RIGHT_BRACE',
+    'LEFT_BRACKET',
+    'RIGHT_BRACKET',
+    'LEFT_PAREN',
+    'RIGHT_PAREN',
+    'SEMICOLON',
+
+    #def
+    'ASSIGMENT_OP',
+    'ONE_LINE_COMMENT',
+    'MULTI_LINE_COMMENT',
+    'DELIMITER',
+
+
+    
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -137,6 +165,32 @@ t_POWER = r'\*\*'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 
+# Assignment Operators - PM
+t_EQUALS = r'\='
+t_PLUS_EQUALS = r'\+\='
+t_MINUS_EQUALS = r'\-\='
+t_TIMES_EQUALS = r'\*\='
+t_DIVIDE_EQUALS = r'\/\='
+t_MOD_EQUALS = r'\%\='
+t_PLUS_PLUS = r'\+\+'
+t_MINUS_MINUS = r'\-\-'
+
+# Delimiters - PM
+t_OPEN_TAG = r'<\?php|<\?'
+t_CLOSE_TAG = r'\?>'
+
+t_LEFT_BRACE = r'\{'
+t_RIGHT_BRACE = r'\}'
+
+t_LEFT_BRACKET = r'\['
+t_RIGHT_BRACKET = r'\['
+
+t_LEFT_PAREN = r'\('
+t_RIGHT_PAREN = r'\)'
+
+t_SEMICOLON = r'\;'
+
+#DEFS
 
 def t_PHP_OPEN_TAG(t):
     r'<\?php'
@@ -227,6 +281,29 @@ def t_LOGICAL_XOR(t):
     return t
 
 
+#def PM
+def t_ONE_LINE_COMMENT(t):
+    r'//.*'
+    #pass
+    return t
+    
+
+def t_MULTI_LINE_COMMENT(t):
+    r'/\*((?s:.*?))\*/'
+    #pass
+    return t
+
+
+def t_ASSIGMENT_OP(t):
+    r'(=|\+\=|\-\=|\*\=|\/\=|\%\=|\+\+|\-\-)'
+    return t 
+
+
+def t_DELIMITER(t):
+    r'\{|\}|\[|\]|\(|\)|\;'
+    return t 
+
+
 # Comparison operators
 t_LESS_THAN = r'<'
 t_GREATER_THAN = r'>'
@@ -249,15 +326,44 @@ lexer = lex.lex()
 
 # Test it out
 data = '''
-<?php 
-
-colocar algoritmo aqui
-
-?> 
+<?php
+// Declaración de variables
+$variable1 = 10;
+$variable2 = "Hola, mundo!";
+$variable3 = true;
+// Estructura condicional
+if ($variable1 > 5) {
+ echo "El número es mayor que 5";
+} else {
+ echo "El número es menor o igual que 5";
+}
+// Bucle
+for ($i = 0; $i < 5; $i++) {
+ echo "Iteración número: $i<br>";
+}
+// Operadores aritméticos
+$resultado = $variable1 + 3;
+echo "El resultado de la suma es: $resultado";
+// Operadores lógicos
+if ($variable3 && $variable1 == 10) {
+ echo "La variable3 es verdadera y la variable1 es igual a 10";
+}
+// Asignación
+$variable1 += 5;
+echo "El valor de variable1 después de la suma es: $variable1";
+// Arrays
+$miArray = array("manzana", "banana", "naranja");
+echo "El segundo elemento del array es: " . $miArray[1];
+// Funciones
+function miFuncion($parametro1, $parametro2) {
+ return $parametro1 * $parametro2;
+}
+echo "El resultado de la función es: " . miFuncion(2, 3);
+?>
 '''
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "JeffErasLindao"
+git_username = "PeterMiranda"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
