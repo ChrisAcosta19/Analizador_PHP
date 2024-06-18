@@ -1,7 +1,8 @@
-global log_file
 import os
 from datetime import datetime
 import ply.lex as lex
+global log_file
+
 
 reserved = {
     '__halt_compiler': 'HALT_COMPILER',
@@ -85,9 +86,9 @@ reserved = {
     'self': 'SELF',
     'string': 'STRING',
     'void': 'VOID',
-    'true' : 'TRUE',
-    'false' : 'FALSE',
-    'array' : 'ARRAY',
+    'true': 'TRUE',
+    'false': 'FALSE',
+    'array': 'ARRAY',
 }
 
 # List of token names.   This is always required
@@ -121,6 +122,7 @@ tokens = [
     'PHP_CLOSE_TAG',
     'CALL',
     'STRING',
+    'CONCAT_STRING', 
 
     # Peter Miranda
     'EQUALS',
@@ -249,7 +251,14 @@ def t_LOGICAL_NOT(t):
     r'!'
     return t
 
-#def PM
+
+# Definición del token CONCAT_STRING
+def t_CONCAT_STRING(t):
+    r'\.'
+    return t
+
+
+#def Peter Miranda
 def t_ONE_LINE_COMMENT(t):
     r'//.*'
     #pass
@@ -295,38 +304,86 @@ lexer = lex.lex()
 # Test it out
 data = '''
 <?php
-// Declaración de variables
-$variable1 = 10;
-$variable2 = "Hola, mundo!";
-$variable3 = true;
-// Estructura condicional
-if ($variable1 > 5) {
- echo "El número es mayor que 5";
-} else {
- echo "El número es menor o igual que 5";
-}
-// Bucle
-for ($i = 0; $i < 5; $i++) {
- echo "Iteración número: $i<br>";
-}
-// Operadores aritméticos
-$resultado = $variable1 + 3;
-echo "El resultado de la suma es: $resultado";
-// Operadores lógicos
-if ($variable3 && $variable1 == 10) {
- echo "La variable3 es verdadera y la variable1 es igual a 10";
-}
-// Asignación
-$variable1 += 5;
-echo "El valor de variable1 después de la suma es: $variable1";
-// Arrays
-$miArray = array("manzana", "banana", "naranja");
-echo "El segundo elemento del array es: " . $miArray[1];
-// Funciones
-function miFuncion($parametro1, $parametro2) {
- return $parametro1 * $parametro2;
-}
-echo "El resultado de la función es: " . miFuncion(2, 3);
+ 
+// Declaración de variables 
+
+$variable1 = 10; 
+
+$variable2 = "Hola, mundo!"; 
+
+$variable3 = true; 
+
+  
+
+// Estructura condicional 
+
+if ($variable1 > 5) { 
+
+    echo "El número es mayor que 5"; 
+
+} else { 
+
+    echo "El número es menor o igual que 5"; 
+
+} 
+
+  
+
+// Bucle 
+
+for ($i = 0; $i < 5; $i++) { 
+
+    echo "Iteración número: $i<br>"; 
+
+} 
+
+  
+
+// Operadores aritméticos 
+
+$resultado = $variable1 + 3; 
+
+echo "El resultado de la suma es: $resultado"; 
+
+  
+
+// Operadores lógicos 
+
+if ($variable3 && $variable1 == 10) { 
+
+    echo "La variable3 es verdadera y la variable1 es igual a 10"; 
+
+} 
+
+  
+
+// Asignación 
+
+$variable1 += 5; 
+
+echo "El valor de variable1 después de la suma es: $variable1"; 
+
+  
+
+// Arrays 
+
+$miArray = array("manzana", "banana", "naranja"); 
+
+echo "El segundo elemento del array es: " . $miArray[1]; 
+
+  
+
+// Funciones 
+
+function miFuncion($parametro1, $parametro2) { 
+
+    return $parametro1 * $parametro2; 
+
+} 
+
+  
+
+echo "El resultado de la función es: " . miFuncion(2, 3); 
 ?>
 '''
 
@@ -339,7 +396,7 @@ if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "PeterMiranda"
+git_username = "userGitHub"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
