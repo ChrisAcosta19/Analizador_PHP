@@ -1,8 +1,7 @@
+global log_file
 import os
 from datetime import datetime
 import ply.lex as lex
-global log_file
-
 
 reserved = {
     '__halt_compiler': 'HALT_COMPILER',
@@ -84,11 +83,10 @@ reserved = {
     'mixed': 'MIXED',
     'object': 'OBJECT',
     'self': 'SELF',
-    'string': 'STRING',
     'void': 'VOID',
-    'true': 'TRUE',
-    'false': 'FALSE',
-    'array': 'ARRAY',
+    'true' : 'TRUE',
+    'false' : 'FALSE',
+    'array' : 'ARRAY',
 }
 
 # List of token names.   This is always required
@@ -107,6 +105,7 @@ tokens = [
     'LPAREN',
     'RPAREN',
     'KEY_VALUE',
+    'DOT',
 
     # Jefferson Eras
     'COMMA',
@@ -118,11 +117,8 @@ tokens = [
     'GREATER_THAN',
     'LESS_EQUAL',
     'GREATER_EQUAL',
-    'PHP_OPEN_TAG',
-    'PHP_CLOSE_TAG',
     'CALL',
     'STRING',
-    'CONCAT_STRING', 
 
     # Peter Miranda
     'EQUALS',
@@ -142,10 +138,8 @@ tokens = [
     'LEFT_PAREN',
     'RIGHT_PAREN',
     'SEMICOLON',
-    'ASSIGMENT_OP',
     'ONE_LINE_COMMENT',
     'MULTI_LINE_COMMENT',
-    'DELIMITER',
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -160,26 +154,27 @@ t_RPAREN = r'\)'
 t_COMMA = r','
 t_CALL = r'->'
 t_KEY_VALUE = r'=>'
+t_DOT = r'\.'
 
 # Assignment Operators - PM
 t_EQUALS = r'\='
 t_PLUS_EQUALS = r'\+\='
 t_MINUS_EQUALS = r'\-\='
 t_TIMES_EQUALS = r'\*\='
-t_DIVIDE_EQUALS = r'\/\='
+t_DIVIDE_EQUALS = r'\/='
 t_MOD_EQUALS = r'\%\='
 t_PLUS_PLUS = r'\+\+'
 t_MINUS_MINUS = r'\-\-'
 
 # Delimiters - PM
-t_OPEN_TAG = r'<\?php|<\?'
+t_OPEN_TAG = r'<\?php'
 t_CLOSE_TAG = r'\?>'
 
 t_LEFT_BRACE = r'\{'
 t_RIGHT_BRACE = r'\}'
 
 t_LEFT_BRACKET = r'\['
-t_RIGHT_BRACKET = r'\['
+t_RIGHT_BRACKET = r'\]'
 
 t_LEFT_PAREN = r'\('
 t_RIGHT_PAREN = r'\)'
@@ -187,17 +182,6 @@ t_RIGHT_PAREN = r'\)'
 t_SEMICOLON = r'\;'
 
 #DEFS
-
-def t_PHP_OPEN_TAG(t):
-    r'<\?php'
-    return t
-
-
-def t_PHP_CLOSE_TAG(t):
-    r'\?>'
-    return t
-
-
 def t_FLOAT(t):
     r'-?(\.\d+|\d+\.\d*)'
     t.value = float(t.value)
@@ -227,7 +211,6 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-
 # Jefferson Eras
 def t_STRING(t):
     r'(\'[^\'\\]*(\\.[^\\]*)*\')|("[^"\\]*(\\.[^\\]*)*")'
@@ -237,11 +220,9 @@ def t_LOGICAL_AND(t):
     r'&&|and'
     return t
 
-
 def t_LOGICAL_OR(t):
     r'\|\||or'
     return t
-
 
 def t_LOGICAL_XOR(t):
     r'xor'
@@ -251,35 +232,16 @@ def t_LOGICAL_NOT(t):
     r'!'
     return t
 
-
-# Definición del token CONCAT_STRING
-def t_CONCAT_STRING(t):
-    r'\.'
-    return t
-
-
-#def Peter Miranda
+#def PM
 def t_ONE_LINE_COMMENT(t):
     r'//.*'
     #pass
     return t
     
-
 def t_MULTI_LINE_COMMENT(t):
     r'/\*((?s:.*?))\*/'
     #pass
     return t
-
-
-def t_ASSIGMENT_OP(t):
-    r'(=|\+\=|\-\=|\*\=|\/\=|\%\=|\+\+|\-\-)'
-    return t 
-
-
-def t_DELIMITER(t):
-    r'\{|\}|\[|\]|\(|\)|\;'
-    return t 
-
 
 # Comparison operators
 t_LESS_THAN = r'<'
@@ -290,20 +252,19 @@ t_GREATER_EQUAL = r'>='
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
 
-
 # Error handling rule
 def t_error(t):
     error_message = "Carácter inesperado '%s' en la linea %d, columna %d" % (t.value[0], t.lexer.lineno, t.lexer.lexpos)
     log_file.write(error_message + '\n')
     t.lexer.skip(1)
 
-
 # Build the lexer
 lexer = lex.lex()
 
 # Test it out
 data = '''
-<?php
+<?php 
+
  
 // Declaración de variables 
 
@@ -384,6 +345,7 @@ function miFuncion($parametro1, $parametro2) {
   
 
 echo "El resultado de la función es: " . miFuncion(2, 3); 
+
 ?>
 '''
 
@@ -396,7 +358,7 @@ if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "userGitHub"
+git_username = "JeffErasLindao"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
