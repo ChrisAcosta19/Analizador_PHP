@@ -265,86 +265,85 @@ lexer = lex.lex()
 data = '''
 <?php 
 
- 
-// Declaración de variables 
-
-$variable1 = 10; 
-
-$variable2 = "Hola, mundo!"; 
-
-$variable3 = true; 
-
-  
-
-// Estructura condicional 
-
-if ($variable1 > 5) { 
-
-    echo "El número es mayor que 5"; 
-
-} else { 
-
-    echo "El número es menor o igual que 5"; 
-
-} 
-
-  
-
-// Bucle 
-
-for ($i = 0; $i < 5; $i++) { 
-
-    echo "Iteración número: $i<br>"; 
-
-} 
-
-  
-
-// Operadores aritméticos 
-
-$resultado = $variable1 + 3; 
-
-echo "El resultado de la suma es: $resultado"; 
-
-  
-
-// Operadores lógicos 
-
-if ($variable3 && $variable1 == 10) { 
-
-    echo "La variable3 es verdadera y la variable1 es igual a 10"; 
-
-} 
-
-  
-
-// Asignación 
-
-$variable1 += 5; 
-
-echo "El valor de variable1 después de la suma es: $variable1"; 
-
-  
-
-// Arrays 
-
-$miArray = array("manzana", "banana", "naranja"); 
-
-echo "El segundo elemento del array es: " . $miArray[1]; 
-
-  
-
-// Funciones 
-
-function miFuncion($parametro1, $parametro2) { 
-
-    return $parametro1 * $parametro2; 
-
-} 
-
-  
-
-echo "El resultado de la función es: " . miFuncion(2, 3); 
+// Solicitud de datos en línea de comandos
+echo "Introduce tu nombre: ";
+$name = trim(fgets(STDIN));
+echo "Introduce tu edad: ";
+$age = (int)trim(fgets(STDIN));
+echo "Introduce tu altura en metros (por ejemplo, 1.75): ";
+$height = (float)trim(fgets(STDIN));
+// Flotantes y operadores aritméticos
+$weight = 70.5; // Peso en kilogramos
+$bmi = $weight / ($height * $height); // Índice de Masa Corporal (IMC)
+echo "Hola, $name. Tu IMC es " . $bmi . ".\n";
+// Enumeraciones (simuladas con arrays)
+$colors = ["RED", "GREEN", "BLUE"];
+$favoriteColor = $colors[1]; // Asignando "GREEN"
+echo "Tu color favorito es $favoriteColor.\n";
+// Operadores lógicos y relacionales
+$isAdult = ($age >= 18);
+$isTall = ($height > 1.75);
+if ($isAdult && $isTall) {
+ echo "Eres adulto y alto.\n";
+} elseif ($isAdult && !$isTall) {
+ echo "Eres adulto pero no alto.\n";
+} elseif (!$isAdult && $isTall) {
+ echo "Eres alto pero no adulto.\n";
+} else {
+ echo "No eres ni adulto ni alto.\n";
+}
+// Operadores de asignación
+$count = 0;
+$count += 10; // Incremento en 10
+$count -= 2; // Decremento en 2
+$count *= 3; // Multiplicación por 3
+$count /= 4; // División por 4
+$count++; // Incremento en 1
+$count--; // Decremento en 1
+echo "El valor de count es $count.\n";
+// Switch statement
+echo "Introduce un número del 1 al 3: ";
+$number = (int)trim(fgets(STDIN));
+switch ($number) {
+ case 1:
+ echo "Elegiste el número uno.\n";
+ break;
+ case 2:
+ echo "Elegiste el número dos.\n";
+ break;
+ case 3:
+ echo "Elegiste el número tres.\n";
+ break;
+ default:
+ echo "Número fuera de rango.\n";
+ break;
+}
+/*
+ Comentarios de múltiples líneas
+ Ejemplo de bucles while y do-while
+*/
+// Bucle while
+$i = 0;
+while ($i < 3) {
+ echo "While loop iteración: $i\n";
+ $i++;
+}
+// Bucle do-while
+$j = 0;
+do {
+ echo "Do-while loop iteración: $j\n";
+ $j++;
+} while ($j < 3);
+// Otros operadores relacionales
+$a = 5;
+$b = 10;
+$c = 5;
+echo "a == b: " . var_export($a == $b, true) . "\n"; // false
+echo "a != b: " . var_export($a != $b, true) . "\n"; // true
+echo "a < b: " . var_export($a < $b, true) . "\n"; // true
+echo "a > b: " . var_export($a > $b, true) . "\n"; // false
+echo "a <= c: " . var_export($a <= $c, true) . "\n"; // true
+echo "a >= c: " . var_export($a >= $c, true) . "\n"; // true
 
 ?> 
 '''
@@ -358,7 +357,7 @@ if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "JeffErasLindao"
+git_username = "PeterMiranda"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
