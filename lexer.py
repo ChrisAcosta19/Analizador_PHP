@@ -1,14 +1,7 @@
+global log_file
 import os
 from datetime import datetime
 import ply.lex as lex
-
-# Obtener la ubicación del script actual
-script_dir = os.path.dirname(__file__)
-
-# Crear carpeta 'logs' en la misma ubicación que el script
-logs_dir = os.path.join(script_dir, 'logs')
-if not os.path.exists(logs_dir):
-    os.makedirs(logs_dir)
 
 reserved = {
     '__halt_compiler': 'HALT_COMPILER',
@@ -18,7 +11,6 @@ reserved = {
     'insteadof': 'INSTEADOF',
     'endforeach': 'ENDFOREACH',
     'declare': 'DECLARE',
-    'array': 'ARRAY',
     'match': 'MATCH',
     'goto': 'GOTO',
     'fn': 'FN',
@@ -87,14 +79,15 @@ reserved = {
     'bool': 'BOOL',
     'clone': 'CLONE',
     'enum': 'ENUM',
-    'false': 'FALSE',
     'iterable': 'ITERABLE',
     'mixed': 'MIXED',
     'object': 'OBJECT',
     'self': 'SELF',
     'string': 'STRING',
-    'true': 'TRUE',
     'void': 'VOID',
+    'true' : 'TRUE',
+    'false' : 'FALSE',
+    'array' : 'ARRAY',
 }
 
 # List of token names.   This is always required
@@ -112,8 +105,11 @@ tokens = [
     'POWER',
     'LPAREN',
     'RPAREN',
-    
+    'KEY_VALUE',
+
     # Jefferson Eras
+    'COMMA',
+    'LOGICAL_NOT',
     'LOGICAL_AND',
     'LOGICAL_OR',
     'LOGICAL_XOR',
@@ -123,8 +119,11 @@ tokens = [
     'GREATER_EQUAL',
     'PHP_OPEN_TAG',
     'PHP_CLOSE_TAG',
-
+    'CALL',
+    'STRING',
     # Peter Miranda
+
+
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -136,7 +135,9 @@ t_MOD = r'%'
 t_POWER = r'\*\*'
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-
+t_COMMA = r','
+t_CALL = r'->'
+t_KEY_VALUE = r'=>'
 
 def t_PHP_OPEN_TAG(t):
     r'<\?php'
@@ -162,7 +163,7 @@ def t_NAME(t):
 
 def t_ID(t):
     r'\$[a-zA-Z_]\w*'
-    t.type = reserved.get(t.value[1:], 'ID')    # Check for reserved words
+    t.type = reserved.get(t.value, 'ID')    # Check for reserved words
     return t
 
 
@@ -172,7 +173,6 @@ def t_INTEGER(t):
     t.value = int(t.value)
     return t
 
-
 # Define a rule so we can track line numbers
 def t_newline(t):
     r'\n+'
@@ -180,37 +180,9 @@ def t_newline(t):
 
 
 # Jefferson Eras
-def t_TRUE(t):
-    r'true'
-    t.value = True
-    return t
-
-
-def t_FALSE(t):
-    r'false'
-    t.value = False
-    return t
-
-
 def t_STRING(t):
-    r'(\'[^\\\n]*(\\.[^\\\n]*)*\')|(\"[^\\\n]*(\\.[^\\\n]*)*\")'
+    r'(\'[^\'\\]*(\\.[^\\]*)*\')|("[^"\\]*(\\.[^\\]*)*")'
     return t
-
-
-def t_ARRAY(t):
-    r'array|\[\]'
-    return t
-
-
-def t_OBJECT(t):
-    r'object'
-    return t
-
-
-def t_ENUM(t):
-    r'enum'
-    return t
-
 
 def t_LOGICAL_AND(t):
     r'&&|and'
@@ -226,6 +198,9 @@ def t_LOGICAL_XOR(t):
     r'xor'
     return t
 
+def t_LOGICAL_NOT(t):
+    r'!'
+    return t
 
 # Comparison operators
 t_LESS_THAN = r'<'
@@ -239,8 +214,8 @@ t_ignore = ' \t\r\n'
 
 # Error handling rule
 def t_error(t):
-    print("Carácter inesperado '%s' en la linea %d, columna %d" % 
-          (t.value[0], t.lexer.lineno, t.lexer.lexpos))
+    error_message = "Carácter inesperado '%s' en la linea %d, columna %d" % (t.value[0], t.lexer.lineno, t.lexer.lexpos)
+    log_file.write(error_message + '\n')
     t.lexer.skip(1)
 
 
@@ -249,19 +224,24 @@ lexer = lex.lex()
 
 # Test it out
 data = '''
-<?php 
-
-colocar algoritmo aqui
-
+<?php
 ?> 
 '''
 
+# Obtener la ubicación del script actual
+script_dir = os.path.dirname(__file__)
+
+# Crear carpeta 'logs' en la misma ubicación que el script
+logs_dir = os.path.join(script_dir, 'logs')
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
+
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "JeffErasLindao"
+git_username = "ChrisAcosta19"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
-with open(os.path.join(logs_dir, log_file_name), 'w') as log_file:
+with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
     # Darle al lexer la entrada
     lexer.input(data)
 
@@ -271,7 +251,7 @@ with open(os.path.join(logs_dir, log_file_name), 'w') as log_file:
         if not tok:
             break      # No hay más entrada
         # Escribir token en archivo de log
-        log_file.write(f'{tok.type},{tok.value},{tok.lineno},{tok.lexpos}\n')
+        log_file.write(f'{tok}\n')
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta {logs_dir}.')
