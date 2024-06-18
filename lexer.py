@@ -83,7 +83,6 @@ reserved = {
     'mixed': 'MIXED',
     'object': 'OBJECT',
     'self': 'SELF',
-    'string': 'STRING',
     'void': 'VOID',
     'true' : 'TRUE',
     'false' : 'FALSE',
@@ -106,6 +105,7 @@ tokens = [
     'LPAREN',
     'RPAREN',
     'KEY_VALUE',
+    'DOT',
 
     # Jefferson Eras
     'COMMA',
@@ -117,8 +117,6 @@ tokens = [
     'GREATER_THAN',
     'LESS_EQUAL',
     'GREATER_EQUAL',
-    'PHP_OPEN_TAG',
-    'PHP_CLOSE_TAG',
     'CALL',
     'STRING',
 
@@ -140,10 +138,8 @@ tokens = [
     'LEFT_PAREN',
     'RIGHT_PAREN',
     'SEMICOLON',
-    'ASSIGMENT_OP',
     'ONE_LINE_COMMENT',
     'MULTI_LINE_COMMENT',
-    'DELIMITER',
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -158,26 +154,27 @@ t_RPAREN = r'\)'
 t_COMMA = r','
 t_CALL = r'->'
 t_KEY_VALUE = r'=>'
+t_DOT = r'\.'
 
 # Assignment Operators - PM
 t_EQUALS = r'\='
 t_PLUS_EQUALS = r'\+\='
 t_MINUS_EQUALS = r'\-\='
 t_TIMES_EQUALS = r'\*\='
-t_DIVIDE_EQUALS = r'\/\='
+t_DIVIDE_EQUALS = r'\/='
 t_MOD_EQUALS = r'\%\='
 t_PLUS_PLUS = r'\+\+'
 t_MINUS_MINUS = r'\-\-'
 
 # Delimiters - PM
-t_OPEN_TAG = r'<\?php|<\?'
+t_OPEN_TAG = r'<\?php'
 t_CLOSE_TAG = r'\?>'
 
 t_LEFT_BRACE = r'\{'
 t_RIGHT_BRACE = r'\}'
 
 t_LEFT_BRACKET = r'\['
-t_RIGHT_BRACKET = r'\['
+t_RIGHT_BRACKET = r'\]'
 
 t_LEFT_PAREN = r'\('
 t_RIGHT_PAREN = r'\)'
@@ -185,17 +182,6 @@ t_RIGHT_PAREN = r'\)'
 t_SEMICOLON = r'\;'
 
 #DEFS
-
-def t_PHP_OPEN_TAG(t):
-    r'<\?php'
-    return t
-
-
-def t_PHP_CLOSE_TAG(t):
-    r'\?>'
-    return t
-
-
 def t_FLOAT(t):
     r'-?(\.\d+|\d+\.\d*)'
     t.value = float(t.value)
@@ -225,7 +211,6 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-
 # Jefferson Eras
 def t_STRING(t):
     r'(\'[^\'\\]*(\\.[^\\]*)*\')|("[^"\\]*(\\.[^\\]*)*")'
@@ -235,11 +220,9 @@ def t_LOGICAL_AND(t):
     r'&&|and'
     return t
 
-
 def t_LOGICAL_OR(t):
     r'\|\||or'
     return t
-
 
 def t_LOGICAL_XOR(t):
     r'xor'
@@ -255,22 +238,10 @@ def t_ONE_LINE_COMMENT(t):
     #pass
     return t
     
-
 def t_MULTI_LINE_COMMENT(t):
     r'/\*((?s:.*?))\*/'
     #pass
     return t
-
-
-def t_ASSIGMENT_OP(t):
-    r'(=|\+\=|\-\=|\*\=|\/\=|\%\=|\+\+|\-\-)'
-    return t 
-
-
-def t_DELIMITER(t):
-    r'\{|\}|\[|\]|\(|\)|\;'
-    return t 
-
 
 # Comparison operators
 t_LESS_THAN = r'<'
@@ -281,13 +252,11 @@ t_GREATER_EQUAL = r'>='
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
 
-
 # Error handling rule
 def t_error(t):
     error_message = "Carácter inesperado '%s' en la linea %d, columna %d" % (t.value[0], t.lexer.lineno, t.lexer.lexpos)
     log_file.write(error_message + '\n')
     t.lexer.skip(1)
-
 
 # Build the lexer
 lexer = lex.lex()
@@ -295,38 +264,85 @@ lexer = lex.lex()
 # Test it out
 data = '''
 <?php
-// Declaración de variables
-$variable1 = 10;
-$variable2 = "Hola, mundo!";
-$variable3 = true;
-// Estructura condicional
-if ($variable1 > 5) {
- echo "El número es mayor que 5";
+// Solicitud de datos en línea de comandos
+echo "Introduce tu nombre: ";
+$name = trim(fgets(STDIN));
+echo "Introduce tu edad: ";
+$age = (int)trim(fgets(STDIN));
+echo "Introduce tu altura en metros (por ejemplo, 1.75): ";
+$height = (float)trim(fgets(STDIN));
+// Flotantes y operadores aritméticos
+$weight = 70.5; // Peso en kilogramos
+$bmi = $weight / ($height * $height); // Índice de Masa Corporal (IMC)
+echo "Hola, $name. Tu IMC es " . $bmi . ".\n";
+// Enumeraciones (simuladas con arrays)
+$colors = ["RED", "GREEN", "BLUE"];
+$favoriteColor = $colors[1]; // Asignando "GREEN"
+echo "Tu color favorito es $favoriteColor.\n";
+// Operadores lógicos y relacionales
+$isAdult = ($age >= 18);
+$isTall = ($height > 1.75);
+if ($isAdult && $isTall) {
+ echo "Eres adulto y alto.\n";
+} elseif ($isAdult && !$isTall) {
+ echo "Eres adulto pero no alto.\n";
+} elseif (!$isAdult && $isTall) {
+ echo "Eres alto pero no adulto.\n";
 } else {
- echo "El número es menor o igual que 5";
+ echo "No eres ni adulto ni alto.\n";
 }
-// Bucle
-for ($i = 0; $i < 5; $i++) {
- echo "Iteración número: $i<br>";
+// Operadores de asignación
+$count = 0;
+$count += 10; // Incremento en 10
+$count -= 2; // Decremento en 2
+$count *= 3; // Multiplicación por 3
+$count /= 4; // División por 4
+$count++; // Incremento en 1
+$count--; // Decremento en 1
+echo "El valor de count es $count.\n";
+// Switch statement
+echo "Introduce un número del 1 al 3: ";
+$number = (int)trim(fgets(STDIN));
+switch ($number) {
+ case 1:
+ echo "Elegiste el número uno.\n";
+ break;
+ case 2:
+ echo "Elegiste el número dos.\n";
+ break;
+ case 3:
+ echo "Elegiste el número tres.\n";
+ break;
+ default:
+ echo "Número fuera de rango.\n";
+ break;
 }
-// Operadores aritméticos
-$resultado = $variable1 + 3;
-echo "El resultado de la suma es: $resultado";
-// Operadores lógicos
-if ($variable3 && $variable1 == 10) {
- echo "La variable3 es verdadera y la variable1 es igual a 10";
+/*
+ Comentarios de múltiples líneas
+ Ejemplo de bucles while y do-while
+*/
+// Bucle while
+$i = 0;
+while ($i < 3) {
+ echo "While loop iteración: $i\n";
+ $i++;
 }
-// Asignación
-$variable1 += 5;
-echo "El valor de variable1 después de la suma es: $variable1";
-// Arrays
-$miArray = array("manzana", "banana", "naranja");
-echo "El segundo elemento del array es: " . $miArray[1];
-// Funciones
-function miFuncion($parametro1, $parametro2) {
- return $parametro1 * $parametro2;
-}
-echo "El resultado de la función es: " . miFuncion(2, 3);
+// Bucle do-while
+$j = 0;
+do {
+ echo "Do-while loop iteración: $j\n";
+ $j++;
+} while ($j < 3);
+// Otros operadores relacionales
+$a = 5;
+$b = 10;
+$c = 5;
+echo "a == b: " . var_export($a == $b, true) . "\n"; // false
+echo "a != b: " . var_export($a != $b, true) . "\n"; // true
+echo "a < b: " . var_export($a < $b, true) . "\n"; // true
+echo "a > b: " . var_export($a > $b, true) . "\n"; // false
+echo "a <= c: " . var_export($a <= $c, true) . "\n"; // true
+echo "a >= c: " . var_export($a >= $c, true) . "\n"; // true
 ?>
 '''
 
