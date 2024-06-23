@@ -21,7 +21,6 @@ reserved = {
     'else': 'ELSE',
     'break': 'BREAK',
     'while': 'WHILE',
-    'echo': 'ECHO',
     'for': 'FOR',
     'foreach': 'FOREACH',
     'function': 'FUNCTION',
@@ -51,6 +50,9 @@ reserved = {
     'or': 'OR',
     'xor': 'XOR',
     'print': 'PRINT',
+    'fgets' : 'FGETS',
+    'stdin' : 'STDIN',
+    'fscanf' : 'FSCANF',
     'echo': 'ECHO',
     'var': 'VAR',
     'global': 'GLOBAL',
@@ -87,6 +89,7 @@ reserved = {
     'true' : 'TRUE',
     'false' : 'FALSE',
     'array' : 'ARRAY',
+
 }
 
 # List of token names.   This is always required
@@ -138,8 +141,10 @@ tokens = [
     'LEFT_PAREN',
     'RIGHT_PAREN',
     'SEMICOLON',
+    'COLON',
     'ONE_LINE_COMMENT',
     'MULTI_LINE_COMMENT',
+    'RELATIONAL_OPERATOR',
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -149,8 +154,6 @@ t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_MOD = r'%'
 t_POWER = r'\*\*'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
 t_COMMA = r','
 t_CALL = r'->'
 t_KEY_VALUE = r'=>'
@@ -180,6 +183,7 @@ t_LEFT_PAREN = r'\('
 t_RIGHT_PAREN = r'\)'
 
 t_SEMICOLON = r'\;'
+t_COLON = r'\:'
 
 #DEFS
 def t_FLOAT(t):
@@ -217,15 +221,15 @@ def t_STRING(t):
     return t
 
 def t_LOGICAL_AND(t):
-    r'&&|and'
+    r'&&|and|AND'
     return t
 
 def t_LOGICAL_OR(t):
-    r'\|\||or'
+    r'\|\||or|OR'
     return t
 
 def t_LOGICAL_XOR(t):
-    r'xor'
+    r'xor|XOR'
     return t
 
 def t_LOGICAL_NOT(t):
@@ -243,6 +247,10 @@ def t_MULTI_LINE_COMMENT(t):
     #pass
     return t
 
+def t_RELATIONAL_OPERATOR(t):
+    r'==|===|!=|!==|>|>=|<|<='
+    return t
+
 # Comparison operators
 t_LESS_THAN = r'<'
 t_GREATER_THAN = r'>'
@@ -258,94 +266,46 @@ def t_error(t):
     log_file.write(error_message + '\n')
     t.lexer.skip(1)
 
+
 # Build the lexer
 lexer = lex.lex()
 
 # Test it out
 data = '''
-<?php 
-
-// Solicitud de datos en línea de comandos
-echo "Introduce tu nombre: ";
-$name = trim(fgets(STDIN));
-echo "Introduce tu edad: ";
-$age = (int)trim(fgets(STDIN));
-echo "Introduce tu altura en metros (por ejemplo, 1.75): ";
-$height = (float)trim(fgets(STDIN));
-// Flotantes y operadores aritméticos
-$weight = 70.5; // Peso en kilogramos
-$bmi = $weight / ($height * $height); // Índice de Masa Corporal (IMC)
-echo "Hola, $name. Tu IMC es " . $bmi . ".\n";
-// Enumeraciones (simuladas con arrays)
-$colors = ["RED", "GREEN", "BLUE"];
-$favoriteColor = $colors[1]; // Asignando "GREEN"
-echo "Tu color favorito es $favoriteColor.\n";
-// Operadores lógicos y relacionales
-$isAdult = ($age >= 18);
-$isTall = ($height > 1.75);
-if ($isAdult && $isTall) {
- echo "Eres adulto y alto.\n";
-} elseif ($isAdult && !$isTall) {
- echo "Eres adulto pero no alto.\n";
-} elseif (!$isAdult && $isTall) {
- echo "Eres alto pero no adulto.\n";
+<?php
+// Declaración de variables
+$variable1 = 10;
+$variable2 = "Hola, mundo!";
+$variable3 = true;
+// Estructura condicional
+if ($variable1 > 5) {
+ echo "El número es mayor que 5";
 } else {
- echo "No eres ni adulto ni alto.\n";
+ echo "El número es menor o igual que 5";
 }
-// Operadores de asignación
-$count = 0;
-$count += 10; // Incremento en 10
-$count -= 2; // Decremento en 2
-$count *= 3; // Multiplicación por 3
-$count /= 4; // División por 4
-$count++; // Incremento en 1
-$count--; // Decremento en 1
-echo "El valor de count es $count.\n";
-// Switch statement
-echo "Introduce un número del 1 al 3: ";
-$number = (int)trim(fgets(STDIN));
-switch ($number) {
- case 1:
- echo "Elegiste el número uno.\n";
- break;
- case 2:
- echo "Elegiste el número dos.\n";
- break;
- case 3:
- echo "Elegiste el número tres.\n";
- break;
- default:
- echo "Número fuera de rango.\n";
- break;
+// Bucle
+for ($i = 0; $i < 5; $i++) {
+ echo "Iteración número: $i<br>";
 }
-/*
- Comentarios de múltiples líneas
- Ejemplo de bucles while y do-while
-*/
-// Bucle while
-$i = 0;
-while ($i < 3) {
- echo "While loop iteración: $i\n";
- $i++;
+// Operadores aritméticos
+$resultado = $variable1 + 3;
+echo "El resultado de la suma es: $resultado";
+// Operadores lógicos
+if ($variable3 && $variable1 == 10) {
+ echo "La variable3 es verdadera y la variable1 es igual a 10";
 }
-// Bucle do-while
-$j = 0;
-do {
- echo "Do-while loop iteración: $j\n";
- $j++;
-} while ($j < 3);
-// Otros operadores relacionales
-$a = 5;
-$b = 10;
-$c = 5;
-echo "a == b: " . var_export($a == $b, true) . "\n"; // false
-echo "a != b: " . var_export($a != $b, true) . "\n"; // true
-echo "a < b: " . var_export($a < $b, true) . "\n"; // true
-echo "a > b: " . var_export($a > $b, true) . "\n"; // false
-echo "a <= c: " . var_export($a <= $c, true) . "\n"; // true
-echo "a >= c: " . var_export($a >= $c, true) . "\n"; // true
-
-?> 
+// Asignación
+$variable1 += 5;
+echo "El valor de variable1 después de la suma es: $variable1";
+// Arrays
+$miArray = array("manzana", "banana", "naranja");
+echo "El segundo elemento del array es: " . $miArray[1];
+// Funciones
+function miFuncion($parametro1, $parametro2) {
+ return $parametro1 * $parametro2;
+}
+echo "El resultado de la función es: " . miFuncion(2, 3);
+?>
 '''
 
 # Obtener la ubicación del script actual
@@ -375,3 +335,5 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta {logs_dir}.')
+
+

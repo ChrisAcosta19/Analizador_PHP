@@ -1,0 +1,1626 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    ABSTRACT
+    AND
+    ARRAY
+    AS
+    ASYNC
+    AWAIT
+    BOOL
+    BREAK
+    CALL
+    CALLABLE
+    CASE
+    CATCH
+    CLASS
+    CLONE
+    CLOSE_TAG
+    COLON
+    CONST
+    CONTINUE
+    DECLARE
+    DEFAULT
+    DIE
+    DIVIDE_EQUALS
+    DO
+    DOT
+    ELSEIF
+    EMPTY
+    ENDDECLARE
+    ENDFOR
+    ENDFOREACH
+    ENDIF
+    ENDSWITCH
+    ENDWHILE
+    ENUM
+    EVAL
+    EXIT
+    EXTENDS
+    FALSE
+    FGETS
+    FINAL
+    FINALLY
+    FLOAT
+    FN
+    FOR
+    FOREACH
+    FUNCTION
+    GLOBAL
+    GOTO
+    GREATER_EQUAL
+    GREATER_THAN
+    HALT_COMPILER
+    IMPLEMENTS
+    INCLUDE
+    INCLUDE_ONCE
+    INSTANCEOF
+    INSTEADOF
+    INTERFACE
+    ISSET
+    ITERABLE
+    KEY_VALUE
+    LESS_EQUAL
+    LESS_THAN
+    LIST
+    LOGICAL_NOT
+    LOGICAL_XOR
+    LPAREN
+    MATCH
+    MINUS_EQUALS
+    MINUS_MINUS
+    MIXED
+    MOD
+    MOD_EQUALS
+    MULTI_LINE_COMMENT
+    NAME
+    NAMESPACE
+    NEW
+    NULL
+    OBJECT
+    ONE_LINE_COMMENT
+    OPEN_TAG
+    OR
+    PLUS_EQUALS
+    PLUS_PLUS
+    POWER
+    PRIVATE
+    PROTECTED
+    PUBLIC
+    REQUIRE
+    REQUIRE_ONCE
+    RETURN
+    RPAREN
+    SELF
+    STATIC
+    SWITCH
+    THROW
+    TIMES_EQUALS
+    TRAIT
+    TRUE
+    TRY
+    UNSET
+    USE
+    VAR
+    VOID
+    WHILE
+    XOR
+    YIELD
+    YIELD_FROM
+
+Grammar
+
+Rule 0     S' -> statement
+Rule 1     statement -> print_statement
+Rule 2     statement -> fscanf_statement
+Rule 3     statement -> assignment_statement
+Rule 4     statement -> if_statement
+Rule 5     statement -> array_declaration_statement
+Rule 6     statement -> error
+Rule 7     print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+Rule 8     print_statement -> ECHO arguments SEMICOLON
+Rule 9     print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON
+Rule 10    print_statement -> PRINT argument SEMICOLON
+Rule 11    arguments -> argument
+Rule 12    arguments -> arguments COMMA argument
+Rule 13    argument -> INTEGER
+Rule 14    argument -> STRING
+Rule 15    argument -> ID
+Rule 16    fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+Rule 17    variable_list -> variable
+Rule 18    variable_list -> variable_list COMMA variable
+Rule 19    variable -> ID
+Rule 20    expression -> INTEGER
+Rule 21    expression -> STRING
+Rule 22    expression -> expression PLUS term
+Rule 23    expression -> expression MINUS term
+Rule 24    expression -> term
+Rule 25    term -> term TIMES factor
+Rule 26    term -> term DIVIDE factor
+Rule 27    term -> factor
+Rule 28    factor -> INTEGER
+Rule 29    factor -> ID
+Rule 30    factor -> LEFT_PAREN expression RIGHT_PAREN
+Rule 31    if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block
+Rule 32    if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block
+Rule 33    condition -> expression
+Rule 34    condition -> condition LOGICAL_AND condition
+Rule 35    condition -> condition LOGICAL_OR condition
+Rule 36    condition -> condition RELATIONAL_OPERATOR condition
+Rule 37    block -> LEFT_BRACE statements RIGHT_BRACE
+Rule 38    statements -> statement
+Rule 39    statements -> statements statement
+Rule 40    assignment_statement -> ID EQUALS expression SEMICOLON
+Rule 41    expression_statement -> expression SEMICOLON
+Rule 42    array_declaration_statement -> ID EQUALS array SEMICOLON
+Rule 43    array -> LEFT_BRACKET array_elements RIGHT_BRACKET
+Rule 44    array_elements -> array_element
+Rule 45    array_elements -> array_elements COMMA array_element
+Rule 46    array_element -> INTEGER
+Rule 47    array_element -> STRING
+Rule 48    array_element -> variable_access
+Rule 49    variable_access -> ID
+
+Terminals, with rules where they appear
+
+ABSTRACT             : 
+AND                  : 
+ARRAY                : 
+AS                   : 
+ASYNC                : 
+AWAIT                : 
+BOOL                 : 
+BREAK                : 
+CALL                 : 
+CALLABLE             : 
+CASE                 : 
+CATCH                : 
+CLASS                : 
+CLONE                : 
+CLOSE_TAG            : 
+COLON                : 
+COMMA                : 12 16 16 18 45
+CONST                : 
+CONTINUE             : 
+DECLARE              : 
+DEFAULT              : 
+DIE                  : 
+DIVIDE               : 26
+DIVIDE_EQUALS        : 
+DO                   : 
+DOT                  : 
+ECHO                 : 7 8
+ELSE                 : 32
+ELSEIF               : 
+EMPTY                : 
+ENDDECLARE           : 
+ENDFOR               : 
+ENDFOREACH           : 
+ENDIF                : 
+ENDSWITCH            : 
+ENDWHILE             : 
+ENUM                 : 
+EQUALS               : 40 42
+EVAL                 : 
+EXIT                 : 
+EXTENDS              : 
+FALSE                : 
+FGETS                : 
+FINAL                : 
+FINALLY              : 
+FLOAT                : 
+FN                   : 
+FOR                  : 
+FOREACH              : 
+FSCANF               : 16
+FUNCTION             : 
+GLOBAL               : 
+GOTO                 : 
+GREATER_EQUAL        : 
+GREATER_THAN         : 
+HALT_COMPILER        : 
+ID                   : 15 19 29 40 42 49
+IF                   : 31 32
+IMPLEMENTS           : 
+INCLUDE              : 
+INCLUDE_ONCE         : 
+INSTANCEOF           : 
+INSTEADOF            : 
+INTEGER              : 13 20 28 46
+INTERFACE            : 
+ISSET                : 
+ITERABLE             : 
+KEY_VALUE            : 
+LEFT_BRACE           : 37
+LEFT_BRACKET         : 43
+LEFT_PAREN           : 7 9 16 30 31 32
+LESS_EQUAL           : 
+LESS_THAN            : 
+LIST                 : 
+LOGICAL_AND          : 34
+LOGICAL_NOT          : 
+LOGICAL_OR           : 35
+LOGICAL_XOR          : 
+LPAREN               : 
+MATCH                : 
+MINUS                : 23
+MINUS_EQUALS         : 
+MINUS_MINUS          : 
+MIXED                : 
+MOD                  : 
+MOD_EQUALS           : 
+MULTI_LINE_COMMENT   : 
+NAME                 : 
+NAMESPACE            : 
+NEW                  : 
+NULL                 : 
+OBJECT               : 
+ONE_LINE_COMMENT     : 
+OPEN_TAG             : 
+OR                   : 
+PLUS                 : 22
+PLUS_EQUALS          : 
+PLUS_PLUS            : 
+POWER                : 
+PRINT                : 9 10
+PRIVATE              : 
+PROTECTED            : 
+PUBLIC               : 
+RELATIONAL_OPERATOR  : 36
+REQUIRE              : 
+REQUIRE_ONCE         : 
+RETURN               : 
+RIGHT_BRACE          : 37
+RIGHT_BRACKET        : 43
+RIGHT_PAREN          : 7 9 16 30 31 32
+RPAREN               : 
+SELF                 : 
+SEMICOLON            : 7 8 9 10 16 40 41 42
+STATIC               : 
+STDIN                : 16
+STRING               : 14 16 21 47
+SWITCH               : 
+THROW                : 
+TIMES                : 25
+TIMES_EQUALS         : 
+TRAIT                : 
+TRUE                 : 
+TRY                  : 
+UNSET                : 
+USE                  : 
+VAR                  : 
+VOID                 : 
+WHILE                : 
+XOR                  : 
+YIELD                : 
+YIELD_FROM           : 
+error                : 6
+
+Nonterminals, with rules where they appear
+
+argument             : 9 10 11 12
+arguments            : 7 8 12
+array                : 42
+array_declaration_statement : 5
+array_element        : 44 45
+array_elements       : 43 45
+assignment_statement : 3
+block                : 31 32 32
+condition            : 31 32 34 34 35 35 36 36
+expression           : 22 23 30 33 40 41
+expression_statement : 
+factor               : 25 26 27
+fscanf_statement     : 2
+if_statement         : 4
+print_statement      : 1
+statement            : 38 39 0
+statements           : 37 39
+term                 : 22 23 24 25 26
+variable             : 17 18
+variable_access      : 48
+variable_list        : 16 18
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . statement
+    (1) statement -> . print_statement
+    (2) statement -> . fscanf_statement
+    (3) statement -> . assignment_statement
+    (4) statement -> . if_statement
+    (5) statement -> . array_declaration_statement
+    (6) statement -> . error
+    (7) print_statement -> . ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+    (8) print_statement -> . ECHO arguments SEMICOLON
+    (9) print_statement -> . PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON
+    (10) print_statement -> . PRINT argument SEMICOLON
+    (16) fscanf_statement -> . FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+    (40) assignment_statement -> . ID EQUALS expression SEMICOLON
+    (31) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block
+    (32) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block ELSE block
+    (42) array_declaration_statement -> . ID EQUALS array SEMICOLON
+
+    error           shift and go to state 7
+    ECHO            shift and go to state 8
+    PRINT           shift and go to state 9
+    FSCANF          shift and go to state 10
+    ID              shift and go to state 11
+    IF              shift and go to state 12
+
+    statement                      shift and go to state 1
+    print_statement                shift and go to state 2
+    fscanf_statement               shift and go to state 3
+    assignment_statement           shift and go to state 4
+    if_statement                   shift and go to state 5
+    array_declaration_statement    shift and go to state 6
+
+state 1
+
+    (0) S' -> statement .
+
+
+
+state 2
+
+    (1) statement -> print_statement .
+
+    $end            reduce using rule 1 (statement -> print_statement .)
+    RIGHT_BRACE     reduce using rule 1 (statement -> print_statement .)
+    error           reduce using rule 1 (statement -> print_statement .)
+    ECHO            reduce using rule 1 (statement -> print_statement .)
+    PRINT           reduce using rule 1 (statement -> print_statement .)
+    FSCANF          reduce using rule 1 (statement -> print_statement .)
+    ID              reduce using rule 1 (statement -> print_statement .)
+    IF              reduce using rule 1 (statement -> print_statement .)
+
+
+state 3
+
+    (2) statement -> fscanf_statement .
+
+    $end            reduce using rule 2 (statement -> fscanf_statement .)
+    RIGHT_BRACE     reduce using rule 2 (statement -> fscanf_statement .)
+    error           reduce using rule 2 (statement -> fscanf_statement .)
+    ECHO            reduce using rule 2 (statement -> fscanf_statement .)
+    PRINT           reduce using rule 2 (statement -> fscanf_statement .)
+    FSCANF          reduce using rule 2 (statement -> fscanf_statement .)
+    ID              reduce using rule 2 (statement -> fscanf_statement .)
+    IF              reduce using rule 2 (statement -> fscanf_statement .)
+
+
+state 4
+
+    (3) statement -> assignment_statement .
+
+    $end            reduce using rule 3 (statement -> assignment_statement .)
+    RIGHT_BRACE     reduce using rule 3 (statement -> assignment_statement .)
+    error           reduce using rule 3 (statement -> assignment_statement .)
+    ECHO            reduce using rule 3 (statement -> assignment_statement .)
+    PRINT           reduce using rule 3 (statement -> assignment_statement .)
+    FSCANF          reduce using rule 3 (statement -> assignment_statement .)
+    ID              reduce using rule 3 (statement -> assignment_statement .)
+    IF              reduce using rule 3 (statement -> assignment_statement .)
+
+
+state 5
+
+    (4) statement -> if_statement .
+
+    $end            reduce using rule 4 (statement -> if_statement .)
+    RIGHT_BRACE     reduce using rule 4 (statement -> if_statement .)
+    error           reduce using rule 4 (statement -> if_statement .)
+    ECHO            reduce using rule 4 (statement -> if_statement .)
+    PRINT           reduce using rule 4 (statement -> if_statement .)
+    FSCANF          reduce using rule 4 (statement -> if_statement .)
+    ID              reduce using rule 4 (statement -> if_statement .)
+    IF              reduce using rule 4 (statement -> if_statement .)
+
+
+state 6
+
+    (5) statement -> array_declaration_statement .
+
+    $end            reduce using rule 5 (statement -> array_declaration_statement .)
+    RIGHT_BRACE     reduce using rule 5 (statement -> array_declaration_statement .)
+    error           reduce using rule 5 (statement -> array_declaration_statement .)
+    ECHO            reduce using rule 5 (statement -> array_declaration_statement .)
+    PRINT           reduce using rule 5 (statement -> array_declaration_statement .)
+    FSCANF          reduce using rule 5 (statement -> array_declaration_statement .)
+    ID              reduce using rule 5 (statement -> array_declaration_statement .)
+    IF              reduce using rule 5 (statement -> array_declaration_statement .)
+
+
+state 7
+
+    (6) statement -> error .
+
+    $end            reduce using rule 6 (statement -> error .)
+    RIGHT_BRACE     reduce using rule 6 (statement -> error .)
+    error           reduce using rule 6 (statement -> error .)
+    ECHO            reduce using rule 6 (statement -> error .)
+    PRINT           reduce using rule 6 (statement -> error .)
+    FSCANF          reduce using rule 6 (statement -> error .)
+    ID              reduce using rule 6 (statement -> error .)
+    IF              reduce using rule 6 (statement -> error .)
+
+
+state 8
+
+    (7) print_statement -> ECHO . LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+    (8) print_statement -> ECHO . arguments SEMICOLON
+    (11) arguments -> . argument
+    (12) arguments -> . arguments COMMA argument
+    (13) argument -> . INTEGER
+    (14) argument -> . STRING
+    (15) argument -> . ID
+
+    LEFT_PAREN      shift and go to state 13
+    INTEGER         shift and go to state 16
+    STRING          shift and go to state 17
+    ID              shift and go to state 18
+
+    arguments                      shift and go to state 14
+    argument                       shift and go to state 15
+
+state 9
+
+    (9) print_statement -> PRINT . LEFT_PAREN argument RIGHT_PAREN SEMICOLON
+    (10) print_statement -> PRINT . argument SEMICOLON
+    (13) argument -> . INTEGER
+    (14) argument -> . STRING
+    (15) argument -> . ID
+
+    LEFT_PAREN      shift and go to state 19
+    INTEGER         shift and go to state 16
+    STRING          shift and go to state 17
+    ID              shift and go to state 18
+
+    argument                       shift and go to state 20
+
+state 10
+
+    (16) fscanf_statement -> FSCANF . LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+
+    LEFT_PAREN      shift and go to state 21
+
+
+state 11
+
+    (40) assignment_statement -> ID . EQUALS expression SEMICOLON
+    (42) array_declaration_statement -> ID . EQUALS array SEMICOLON
+
+    EQUALS          shift and go to state 22
+
+
+state 12
+
+    (31) if_statement -> IF . LEFT_PAREN condition RIGHT_PAREN block
+    (32) if_statement -> IF . LEFT_PAREN condition RIGHT_PAREN block ELSE block
+
+    LEFT_PAREN      shift and go to state 23
+
+
+state 13
+
+    (7) print_statement -> ECHO LEFT_PAREN . arguments RIGHT_PAREN SEMICOLON
+    (11) arguments -> . argument
+    (12) arguments -> . arguments COMMA argument
+    (13) argument -> . INTEGER
+    (14) argument -> . STRING
+    (15) argument -> . ID
+
+    INTEGER         shift and go to state 16
+    STRING          shift and go to state 17
+    ID              shift and go to state 18
+
+    arguments                      shift and go to state 24
+    argument                       shift and go to state 15
+
+state 14
+
+    (8) print_statement -> ECHO arguments . SEMICOLON
+    (12) arguments -> arguments . COMMA argument
+
+    SEMICOLON       shift and go to state 25
+    COMMA           shift and go to state 26
+
+
+state 15
+
+    (11) arguments -> argument .
+
+    SEMICOLON       reduce using rule 11 (arguments -> argument .)
+    COMMA           reduce using rule 11 (arguments -> argument .)
+    RIGHT_PAREN     reduce using rule 11 (arguments -> argument .)
+
+
+state 16
+
+    (13) argument -> INTEGER .
+
+    SEMICOLON       reduce using rule 13 (argument -> INTEGER .)
+    COMMA           reduce using rule 13 (argument -> INTEGER .)
+    RIGHT_PAREN     reduce using rule 13 (argument -> INTEGER .)
+
+
+state 17
+
+    (14) argument -> STRING .
+
+    SEMICOLON       reduce using rule 14 (argument -> STRING .)
+    COMMA           reduce using rule 14 (argument -> STRING .)
+    RIGHT_PAREN     reduce using rule 14 (argument -> STRING .)
+
+
+state 18
+
+    (15) argument -> ID .
+
+    SEMICOLON       reduce using rule 15 (argument -> ID .)
+    COMMA           reduce using rule 15 (argument -> ID .)
+    RIGHT_PAREN     reduce using rule 15 (argument -> ID .)
+
+
+state 19
+
+    (9) print_statement -> PRINT LEFT_PAREN . argument RIGHT_PAREN SEMICOLON
+    (13) argument -> . INTEGER
+    (14) argument -> . STRING
+    (15) argument -> . ID
+
+    INTEGER         shift and go to state 16
+    STRING          shift and go to state 17
+    ID              shift and go to state 18
+
+    argument                       shift and go to state 27
+
+state 20
+
+    (10) print_statement -> PRINT argument . SEMICOLON
+
+    SEMICOLON       shift and go to state 28
+
+
+state 21
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN . STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+
+    STDIN           shift and go to state 29
+
+
+state 22
+
+    (40) assignment_statement -> ID EQUALS . expression SEMICOLON
+    (42) array_declaration_statement -> ID EQUALS . array SEMICOLON
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (43) array -> . LEFT_BRACKET array_elements RIGHT_BRACKET
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    LEFT_BRACKET    shift and go to state 36
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    expression                     shift and go to state 31
+    array                          shift and go to state 32
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 23
+
+    (31) if_statement -> IF LEFT_PAREN . condition RIGHT_PAREN block
+    (32) if_statement -> IF LEFT_PAREN . condition RIGHT_PAREN block ELSE block
+    (33) condition -> . expression
+    (34) condition -> . condition LOGICAL_AND condition
+    (35) condition -> . condition LOGICAL_OR condition
+    (36) condition -> . condition RELATIONAL_OPERATOR condition
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    condition                      shift and go to state 39
+    expression                     shift and go to state 40
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 24
+
+    (7) print_statement -> ECHO LEFT_PAREN arguments . RIGHT_PAREN SEMICOLON
+    (12) arguments -> arguments . COMMA argument
+
+    RIGHT_PAREN     shift and go to state 41
+    COMMA           shift and go to state 26
+
+
+state 25
+
+    (8) print_statement -> ECHO arguments SEMICOLON .
+
+    $end            reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    error           reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    ECHO            reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    PRINT           reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    FSCANF          reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    ID              reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+    IF              reduce using rule 8 (print_statement -> ECHO arguments SEMICOLON .)
+
+
+state 26
+
+    (12) arguments -> arguments COMMA . argument
+    (13) argument -> . INTEGER
+    (14) argument -> . STRING
+    (15) argument -> . ID
+
+    INTEGER         shift and go to state 16
+    STRING          shift and go to state 17
+    ID              shift and go to state 18
+
+    argument                       shift and go to state 42
+
+state 27
+
+    (9) print_statement -> PRINT LEFT_PAREN argument . RIGHT_PAREN SEMICOLON
+
+    RIGHT_PAREN     shift and go to state 43
+
+
+state 28
+
+    (10) print_statement -> PRINT argument SEMICOLON .
+
+    $end            reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    error           reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    ECHO            reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    PRINT           reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    FSCANF          reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    ID              reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+    IF              reduce using rule 10 (print_statement -> PRINT argument SEMICOLON .)
+
+
+state 29
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN . COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+
+    COMMA           shift and go to state 44
+
+
+state 30
+
+    (29) factor -> ID .
+
+    TIMES           reduce using rule 29 (factor -> ID .)
+    DIVIDE          reduce using rule 29 (factor -> ID .)
+    SEMICOLON       reduce using rule 29 (factor -> ID .)
+    PLUS            reduce using rule 29 (factor -> ID .)
+    MINUS           reduce using rule 29 (factor -> ID .)
+    RIGHT_PAREN     reduce using rule 29 (factor -> ID .)
+    LOGICAL_AND     reduce using rule 29 (factor -> ID .)
+    LOGICAL_OR      reduce using rule 29 (factor -> ID .)
+    RELATIONAL_OPERATOR reduce using rule 29 (factor -> ID .)
+
+
+state 31
+
+    (40) assignment_statement -> ID EQUALS expression . SEMICOLON
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    SEMICOLON       shift and go to state 45
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+
+
+state 32
+
+    (42) array_declaration_statement -> ID EQUALS array . SEMICOLON
+
+    SEMICOLON       shift and go to state 48
+
+
+state 33
+
+    (20) expression -> INTEGER .
+    (28) factor -> INTEGER .
+
+  ! reduce/reduce conflict for SEMICOLON resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for PLUS resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for MINUS resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for RIGHT_PAREN resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for LOGICAL_AND resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for LOGICAL_OR resolved using rule 20 (expression -> INTEGER .)
+  ! reduce/reduce conflict for RELATIONAL_OPERATOR resolved using rule 20 (expression -> INTEGER .)
+    SEMICOLON       reduce using rule 20 (expression -> INTEGER .)
+    PLUS            reduce using rule 20 (expression -> INTEGER .)
+    MINUS           reduce using rule 20 (expression -> INTEGER .)
+    RIGHT_PAREN     reduce using rule 20 (expression -> INTEGER .)
+    LOGICAL_AND     reduce using rule 20 (expression -> INTEGER .)
+    LOGICAL_OR      reduce using rule 20 (expression -> INTEGER .)
+    RELATIONAL_OPERATOR reduce using rule 20 (expression -> INTEGER .)
+    TIMES           reduce using rule 28 (factor -> INTEGER .)
+    DIVIDE          reduce using rule 28 (factor -> INTEGER .)
+
+  ! SEMICOLON       [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! PLUS            [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! MINUS           [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! RIGHT_PAREN     [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! LOGICAL_AND     [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! LOGICAL_OR      [ reduce using rule 28 (factor -> INTEGER .) ]
+  ! RELATIONAL_OPERATOR [ reduce using rule 28 (factor -> INTEGER .) ]
+
+
+state 34
+
+    (21) expression -> STRING .
+
+    SEMICOLON       reduce using rule 21 (expression -> STRING .)
+    PLUS            reduce using rule 21 (expression -> STRING .)
+    MINUS           reduce using rule 21 (expression -> STRING .)
+    RIGHT_PAREN     reduce using rule 21 (expression -> STRING .)
+    LOGICAL_AND     reduce using rule 21 (expression -> STRING .)
+    LOGICAL_OR      reduce using rule 21 (expression -> STRING .)
+    RELATIONAL_OPERATOR reduce using rule 21 (expression -> STRING .)
+
+
+state 35
+
+    (24) expression -> term .
+    (25) term -> term . TIMES factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 24 (expression -> term .)
+    PLUS            reduce using rule 24 (expression -> term .)
+    MINUS           reduce using rule 24 (expression -> term .)
+    RIGHT_PAREN     reduce using rule 24 (expression -> term .)
+    LOGICAL_AND     reduce using rule 24 (expression -> term .)
+    LOGICAL_OR      reduce using rule 24 (expression -> term .)
+    RELATIONAL_OPERATOR reduce using rule 24 (expression -> term .)
+    TIMES           shift and go to state 49
+    DIVIDE          shift and go to state 50
+
+
+state 36
+
+    (43) array -> LEFT_BRACKET . array_elements RIGHT_BRACKET
+    (44) array_elements -> . array_element
+    (45) array_elements -> . array_elements COMMA array_element
+    (46) array_element -> . INTEGER
+    (47) array_element -> . STRING
+    (48) array_element -> . variable_access
+    (49) variable_access -> . ID
+
+    INTEGER         shift and go to state 53
+    STRING          shift and go to state 54
+    ID              shift and go to state 56
+
+    array_elements                 shift and go to state 51
+    array_element                  shift and go to state 52
+    variable_access                shift and go to state 55
+
+state 37
+
+    (27) term -> factor .
+
+    TIMES           reduce using rule 27 (term -> factor .)
+    DIVIDE          reduce using rule 27 (term -> factor .)
+    SEMICOLON       reduce using rule 27 (term -> factor .)
+    PLUS            reduce using rule 27 (term -> factor .)
+    MINUS           reduce using rule 27 (term -> factor .)
+    RIGHT_PAREN     reduce using rule 27 (term -> factor .)
+    LOGICAL_AND     reduce using rule 27 (term -> factor .)
+    LOGICAL_OR      reduce using rule 27 (term -> factor .)
+    RELATIONAL_OPERATOR reduce using rule 27 (term -> factor .)
+
+
+state 38
+
+    (30) factor -> LEFT_PAREN . expression RIGHT_PAREN
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    expression                     shift and go to state 57
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 39
+
+    (31) if_statement -> IF LEFT_PAREN condition . RIGHT_PAREN block
+    (32) if_statement -> IF LEFT_PAREN condition . RIGHT_PAREN block ELSE block
+    (34) condition -> condition . LOGICAL_AND condition
+    (35) condition -> condition . LOGICAL_OR condition
+    (36) condition -> condition . RELATIONAL_OPERATOR condition
+
+    RIGHT_PAREN     shift and go to state 58
+    LOGICAL_AND     shift and go to state 59
+    LOGICAL_OR      shift and go to state 60
+    RELATIONAL_OPERATOR shift and go to state 61
+
+
+state 40
+
+    (33) condition -> expression .
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RIGHT_PAREN     reduce using rule 33 (condition -> expression .)
+    LOGICAL_AND     reduce using rule 33 (condition -> expression .)
+    LOGICAL_OR      reduce using rule 33 (condition -> expression .)
+    RELATIONAL_OPERATOR reduce using rule 33 (condition -> expression .)
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+
+
+state 41
+
+    (7) print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 62
+
+
+state 42
+
+    (12) arguments -> arguments COMMA argument .
+
+    SEMICOLON       reduce using rule 12 (arguments -> arguments COMMA argument .)
+    COMMA           reduce using rule 12 (arguments -> arguments COMMA argument .)
+    RIGHT_PAREN     reduce using rule 12 (arguments -> arguments COMMA argument .)
+
+
+state 43
+
+    (9) print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 63
+
+
+state 44
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA . STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+
+    STRING          shift and go to state 64
+
+
+state 45
+
+    (40) assignment_statement -> ID EQUALS expression SEMICOLON .
+
+    $end            reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    error           reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    ECHO            reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    PRINT           reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    FSCANF          reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    ID              reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+    IF              reduce using rule 40 (assignment_statement -> ID EQUALS expression SEMICOLON .)
+
+
+state 46
+
+    (22) expression -> expression PLUS . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 66
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    term                           shift and go to state 65
+    factor                         shift and go to state 37
+
+state 47
+
+    (23) expression -> expression MINUS . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 66
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    term                           shift and go to state 67
+    factor                         shift and go to state 37
+
+state 48
+
+    (42) array_declaration_statement -> ID EQUALS array SEMICOLON .
+
+    $end            reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    error           reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    ECHO            reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    PRINT           reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    FSCANF          reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    ID              reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+    IF              reduce using rule 42 (array_declaration_statement -> ID EQUALS array SEMICOLON .)
+
+
+state 49
+
+    (25) term -> term TIMES . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 66
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    factor                         shift and go to state 68
+
+state 50
+
+    (26) term -> term DIVIDE . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 66
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    factor                         shift and go to state 69
+
+state 51
+
+    (43) array -> LEFT_BRACKET array_elements . RIGHT_BRACKET
+    (45) array_elements -> array_elements . COMMA array_element
+
+    RIGHT_BRACKET   shift and go to state 70
+    COMMA           shift and go to state 71
+
+
+state 52
+
+    (44) array_elements -> array_element .
+
+    RIGHT_BRACKET   reduce using rule 44 (array_elements -> array_element .)
+    COMMA           reduce using rule 44 (array_elements -> array_element .)
+
+
+state 53
+
+    (46) array_element -> INTEGER .
+
+    RIGHT_BRACKET   reduce using rule 46 (array_element -> INTEGER .)
+    COMMA           reduce using rule 46 (array_element -> INTEGER .)
+
+
+state 54
+
+    (47) array_element -> STRING .
+
+    RIGHT_BRACKET   reduce using rule 47 (array_element -> STRING .)
+    COMMA           reduce using rule 47 (array_element -> STRING .)
+
+
+state 55
+
+    (48) array_element -> variable_access .
+
+    RIGHT_BRACKET   reduce using rule 48 (array_element -> variable_access .)
+    COMMA           reduce using rule 48 (array_element -> variable_access .)
+
+
+state 56
+
+    (49) variable_access -> ID .
+
+    RIGHT_BRACKET   reduce using rule 49 (variable_access -> ID .)
+    COMMA           reduce using rule 49 (variable_access -> ID .)
+
+
+state 57
+
+    (30) factor -> LEFT_PAREN expression . RIGHT_PAREN
+    (22) expression -> expression . PLUS term
+    (23) expression -> expression . MINUS term
+
+    RIGHT_PAREN     shift and go to state 72
+    PLUS            shift and go to state 46
+    MINUS           shift and go to state 47
+
+
+state 58
+
+    (31) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN . block
+    (32) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN . block ELSE block
+    (37) block -> . LEFT_BRACE statements RIGHT_BRACE
+
+    LEFT_BRACE      shift and go to state 74
+
+    block                          shift and go to state 73
+
+state 59
+
+    (34) condition -> condition LOGICAL_AND . condition
+    (33) condition -> . expression
+    (34) condition -> . condition LOGICAL_AND condition
+    (35) condition -> . condition LOGICAL_OR condition
+    (36) condition -> . condition RELATIONAL_OPERATOR condition
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    condition                      shift and go to state 75
+    expression                     shift and go to state 40
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 60
+
+    (35) condition -> condition LOGICAL_OR . condition
+    (33) condition -> . expression
+    (34) condition -> . condition LOGICAL_AND condition
+    (35) condition -> . condition LOGICAL_OR condition
+    (36) condition -> . condition RELATIONAL_OPERATOR condition
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    condition                      shift and go to state 76
+    expression                     shift and go to state 40
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 61
+
+    (36) condition -> condition RELATIONAL_OPERATOR . condition
+    (33) condition -> . expression
+    (34) condition -> . condition LOGICAL_AND condition
+    (35) condition -> . condition LOGICAL_OR condition
+    (36) condition -> . condition RELATIONAL_OPERATOR condition
+    (20) expression -> . INTEGER
+    (21) expression -> . STRING
+    (22) expression -> . expression PLUS term
+    (23) expression -> . expression MINUS term
+    (24) expression -> . term
+    (25) term -> . term TIMES factor
+    (26) term -> . term DIVIDE factor
+    (27) term -> . factor
+    (28) factor -> . INTEGER
+    (29) factor -> . ID
+    (30) factor -> . LEFT_PAREN expression RIGHT_PAREN
+
+    INTEGER         shift and go to state 33
+    STRING          shift and go to state 34
+    ID              shift and go to state 30
+    LEFT_PAREN      shift and go to state 38
+
+    condition                      shift and go to state 77
+    expression                     shift and go to state 40
+    term                           shift and go to state 35
+    factor                         shift and go to state 37
+
+state 62
+
+    (7) print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .
+
+    $end            reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    error           reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    ECHO            reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    PRINT           reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    FSCANF          reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    ID              reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+    IF              reduce using rule 7 (print_statement -> ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON .)
+
+
+state 63
+
+    (9) print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .
+
+    $end            reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    error           reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    ECHO            reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    PRINT           reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    FSCANF          reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    ID              reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+    IF              reduce using rule 9 (print_statement -> PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON .)
+
+
+state 64
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING . COMMA variable_list RIGHT_PAREN SEMICOLON
+
+    COMMA           shift and go to state 78
+
+
+state 65
+
+    (22) expression -> expression PLUS term .
+    (25) term -> term . TIMES factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 22 (expression -> expression PLUS term .)
+    PLUS            reduce using rule 22 (expression -> expression PLUS term .)
+    MINUS           reduce using rule 22 (expression -> expression PLUS term .)
+    RIGHT_PAREN     reduce using rule 22 (expression -> expression PLUS term .)
+    LOGICAL_AND     reduce using rule 22 (expression -> expression PLUS term .)
+    LOGICAL_OR      reduce using rule 22 (expression -> expression PLUS term .)
+    RELATIONAL_OPERATOR reduce using rule 22 (expression -> expression PLUS term .)
+    TIMES           shift and go to state 49
+    DIVIDE          shift and go to state 50
+
+
+state 66
+
+    (28) factor -> INTEGER .
+
+    TIMES           reduce using rule 28 (factor -> INTEGER .)
+    DIVIDE          reduce using rule 28 (factor -> INTEGER .)
+    SEMICOLON       reduce using rule 28 (factor -> INTEGER .)
+    PLUS            reduce using rule 28 (factor -> INTEGER .)
+    MINUS           reduce using rule 28 (factor -> INTEGER .)
+    RIGHT_PAREN     reduce using rule 28 (factor -> INTEGER .)
+    LOGICAL_AND     reduce using rule 28 (factor -> INTEGER .)
+    LOGICAL_OR      reduce using rule 28 (factor -> INTEGER .)
+    RELATIONAL_OPERATOR reduce using rule 28 (factor -> INTEGER .)
+
+
+state 67
+
+    (23) expression -> expression MINUS term .
+    (25) term -> term . TIMES factor
+    (26) term -> term . DIVIDE factor
+
+    SEMICOLON       reduce using rule 23 (expression -> expression MINUS term .)
+    PLUS            reduce using rule 23 (expression -> expression MINUS term .)
+    MINUS           reduce using rule 23 (expression -> expression MINUS term .)
+    RIGHT_PAREN     reduce using rule 23 (expression -> expression MINUS term .)
+    LOGICAL_AND     reduce using rule 23 (expression -> expression MINUS term .)
+    LOGICAL_OR      reduce using rule 23 (expression -> expression MINUS term .)
+    RELATIONAL_OPERATOR reduce using rule 23 (expression -> expression MINUS term .)
+    TIMES           shift and go to state 49
+    DIVIDE          shift and go to state 50
+
+
+state 68
+
+    (25) term -> term TIMES factor .
+
+    TIMES           reduce using rule 25 (term -> term TIMES factor .)
+    DIVIDE          reduce using rule 25 (term -> term TIMES factor .)
+    SEMICOLON       reduce using rule 25 (term -> term TIMES factor .)
+    PLUS            reduce using rule 25 (term -> term TIMES factor .)
+    MINUS           reduce using rule 25 (term -> term TIMES factor .)
+    RIGHT_PAREN     reduce using rule 25 (term -> term TIMES factor .)
+    LOGICAL_AND     reduce using rule 25 (term -> term TIMES factor .)
+    LOGICAL_OR      reduce using rule 25 (term -> term TIMES factor .)
+    RELATIONAL_OPERATOR reduce using rule 25 (term -> term TIMES factor .)
+
+
+state 69
+
+    (26) term -> term DIVIDE factor .
+
+    TIMES           reduce using rule 26 (term -> term DIVIDE factor .)
+    DIVIDE          reduce using rule 26 (term -> term DIVIDE factor .)
+    SEMICOLON       reduce using rule 26 (term -> term DIVIDE factor .)
+    PLUS            reduce using rule 26 (term -> term DIVIDE factor .)
+    MINUS           reduce using rule 26 (term -> term DIVIDE factor .)
+    RIGHT_PAREN     reduce using rule 26 (term -> term DIVIDE factor .)
+    LOGICAL_AND     reduce using rule 26 (term -> term DIVIDE factor .)
+    LOGICAL_OR      reduce using rule 26 (term -> term DIVIDE factor .)
+    RELATIONAL_OPERATOR reduce using rule 26 (term -> term DIVIDE factor .)
+
+
+state 70
+
+    (43) array -> LEFT_BRACKET array_elements RIGHT_BRACKET .
+
+    SEMICOLON       reduce using rule 43 (array -> LEFT_BRACKET array_elements RIGHT_BRACKET .)
+
+
+state 71
+
+    (45) array_elements -> array_elements COMMA . array_element
+    (46) array_element -> . INTEGER
+    (47) array_element -> . STRING
+    (48) array_element -> . variable_access
+    (49) variable_access -> . ID
+
+    INTEGER         shift and go to state 53
+    STRING          shift and go to state 54
+    ID              shift and go to state 56
+
+    array_element                  shift and go to state 79
+    variable_access                shift and go to state 55
+
+state 72
+
+    (30) factor -> LEFT_PAREN expression RIGHT_PAREN .
+
+    TIMES           reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    DIVIDE          reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    SEMICOLON       reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    PLUS            reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    MINUS           reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    RIGHT_PAREN     reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    LOGICAL_AND     reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    LOGICAL_OR      reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+    RELATIONAL_OPERATOR reduce using rule 30 (factor -> LEFT_PAREN expression RIGHT_PAREN .)
+
+
+state 73
+
+    (31) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .
+    (32) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block . ELSE block
+
+    $end            reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    RIGHT_BRACE     reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    error           reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    ECHO            reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    PRINT           reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    FSCANF          reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    ID              reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    IF              reduce using rule 31 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block .)
+    ELSE            shift and go to state 80
+
+
+state 74
+
+    (37) block -> LEFT_BRACE . statements RIGHT_BRACE
+    (38) statements -> . statement
+    (39) statements -> . statements statement
+    (1) statement -> . print_statement
+    (2) statement -> . fscanf_statement
+    (3) statement -> . assignment_statement
+    (4) statement -> . if_statement
+    (5) statement -> . array_declaration_statement
+    (6) statement -> . error
+    (7) print_statement -> . ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+    (8) print_statement -> . ECHO arguments SEMICOLON
+    (9) print_statement -> . PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON
+    (10) print_statement -> . PRINT argument SEMICOLON
+    (16) fscanf_statement -> . FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+    (40) assignment_statement -> . ID EQUALS expression SEMICOLON
+    (31) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block
+    (32) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block ELSE block
+    (42) array_declaration_statement -> . ID EQUALS array SEMICOLON
+
+    error           shift and go to state 7
+    ECHO            shift and go to state 8
+    PRINT           shift and go to state 9
+    FSCANF          shift and go to state 10
+    ID              shift and go to state 11
+    IF              shift and go to state 12
+
+    statements                     shift and go to state 81
+    statement                      shift and go to state 82
+    print_statement                shift and go to state 2
+    fscanf_statement               shift and go to state 3
+    assignment_statement           shift and go to state 4
+    if_statement                   shift and go to state 5
+    array_declaration_statement    shift and go to state 6
+
+state 75
+
+    (34) condition -> condition LOGICAL_AND condition .
+    (34) condition -> condition . LOGICAL_AND condition
+    (35) condition -> condition . LOGICAL_OR condition
+    (36) condition -> condition . RELATIONAL_OPERATOR condition
+
+  ! shift/reduce conflict for LOGICAL_AND resolved as shift
+  ! shift/reduce conflict for LOGICAL_OR resolved as shift
+  ! shift/reduce conflict for RELATIONAL_OPERATOR resolved as shift
+    RIGHT_PAREN     reduce using rule 34 (condition -> condition LOGICAL_AND condition .)
+    LOGICAL_AND     shift and go to state 59
+    LOGICAL_OR      shift and go to state 60
+    RELATIONAL_OPERATOR shift and go to state 61
+
+  ! LOGICAL_AND     [ reduce using rule 34 (condition -> condition LOGICAL_AND condition .) ]
+  ! LOGICAL_OR      [ reduce using rule 34 (condition -> condition LOGICAL_AND condition .) ]
+  ! RELATIONAL_OPERATOR [ reduce using rule 34 (condition -> condition LOGICAL_AND condition .) ]
+
+
+state 76
+
+    (35) condition -> condition LOGICAL_OR condition .
+    (34) condition -> condition . LOGICAL_AND condition
+    (35) condition -> condition . LOGICAL_OR condition
+    (36) condition -> condition . RELATIONAL_OPERATOR condition
+
+  ! shift/reduce conflict for LOGICAL_AND resolved as shift
+  ! shift/reduce conflict for LOGICAL_OR resolved as shift
+  ! shift/reduce conflict for RELATIONAL_OPERATOR resolved as shift
+    RIGHT_PAREN     reduce using rule 35 (condition -> condition LOGICAL_OR condition .)
+    LOGICAL_AND     shift and go to state 59
+    LOGICAL_OR      shift and go to state 60
+    RELATIONAL_OPERATOR shift and go to state 61
+
+  ! LOGICAL_AND     [ reduce using rule 35 (condition -> condition LOGICAL_OR condition .) ]
+  ! LOGICAL_OR      [ reduce using rule 35 (condition -> condition LOGICAL_OR condition .) ]
+  ! RELATIONAL_OPERATOR [ reduce using rule 35 (condition -> condition LOGICAL_OR condition .) ]
+
+
+state 77
+
+    (36) condition -> condition RELATIONAL_OPERATOR condition .
+    (34) condition -> condition . LOGICAL_AND condition
+    (35) condition -> condition . LOGICAL_OR condition
+    (36) condition -> condition . RELATIONAL_OPERATOR condition
+
+  ! shift/reduce conflict for LOGICAL_AND resolved as shift
+  ! shift/reduce conflict for LOGICAL_OR resolved as shift
+  ! shift/reduce conflict for RELATIONAL_OPERATOR resolved as shift
+    RIGHT_PAREN     reduce using rule 36 (condition -> condition RELATIONAL_OPERATOR condition .)
+    LOGICAL_AND     shift and go to state 59
+    LOGICAL_OR      shift and go to state 60
+    RELATIONAL_OPERATOR shift and go to state 61
+
+  ! LOGICAL_AND     [ reduce using rule 36 (condition -> condition RELATIONAL_OPERATOR condition .) ]
+  ! LOGICAL_OR      [ reduce using rule 36 (condition -> condition RELATIONAL_OPERATOR condition .) ]
+  ! RELATIONAL_OPERATOR [ reduce using rule 36 (condition -> condition RELATIONAL_OPERATOR condition .) ]
+
+
+state 78
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA . variable_list RIGHT_PAREN SEMICOLON
+    (17) variable_list -> . variable
+    (18) variable_list -> . variable_list COMMA variable
+    (19) variable -> . ID
+
+    ID              shift and go to state 85
+
+    variable_list                  shift and go to state 83
+    variable                       shift and go to state 84
+
+state 79
+
+    (45) array_elements -> array_elements COMMA array_element .
+
+    RIGHT_BRACKET   reduce using rule 45 (array_elements -> array_elements COMMA array_element .)
+    COMMA           reduce using rule 45 (array_elements -> array_elements COMMA array_element .)
+
+
+state 80
+
+    (32) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE . block
+    (37) block -> . LEFT_BRACE statements RIGHT_BRACE
+
+    LEFT_BRACE      shift and go to state 74
+
+    block                          shift and go to state 86
+
+state 81
+
+    (37) block -> LEFT_BRACE statements . RIGHT_BRACE
+    (39) statements -> statements . statement
+    (1) statement -> . print_statement
+    (2) statement -> . fscanf_statement
+    (3) statement -> . assignment_statement
+    (4) statement -> . if_statement
+    (5) statement -> . array_declaration_statement
+    (6) statement -> . error
+    (7) print_statement -> . ECHO LEFT_PAREN arguments RIGHT_PAREN SEMICOLON
+    (8) print_statement -> . ECHO arguments SEMICOLON
+    (9) print_statement -> . PRINT LEFT_PAREN argument RIGHT_PAREN SEMICOLON
+    (10) print_statement -> . PRINT argument SEMICOLON
+    (16) fscanf_statement -> . FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON
+    (40) assignment_statement -> . ID EQUALS expression SEMICOLON
+    (31) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block
+    (32) if_statement -> . IF LEFT_PAREN condition RIGHT_PAREN block ELSE block
+    (42) array_declaration_statement -> . ID EQUALS array SEMICOLON
+
+    RIGHT_BRACE     shift and go to state 87
+    error           shift and go to state 7
+    ECHO            shift and go to state 8
+    PRINT           shift and go to state 9
+    FSCANF          shift and go to state 10
+    ID              shift and go to state 11
+    IF              shift and go to state 12
+
+    statement                      shift and go to state 88
+    print_statement                shift and go to state 2
+    fscanf_statement               shift and go to state 3
+    assignment_statement           shift and go to state 4
+    if_statement                   shift and go to state 5
+    array_declaration_statement    shift and go to state 6
+
+state 82
+
+    (38) statements -> statement .
+
+    RIGHT_BRACE     reduce using rule 38 (statements -> statement .)
+    error           reduce using rule 38 (statements -> statement .)
+    ECHO            reduce using rule 38 (statements -> statement .)
+    PRINT           reduce using rule 38 (statements -> statement .)
+    FSCANF          reduce using rule 38 (statements -> statement .)
+    ID              reduce using rule 38 (statements -> statement .)
+    IF              reduce using rule 38 (statements -> statement .)
+
+
+state 83
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list . RIGHT_PAREN SEMICOLON
+    (18) variable_list -> variable_list . COMMA variable
+
+    RIGHT_PAREN     shift and go to state 90
+    COMMA           shift and go to state 89
+
+
+state 84
+
+    (17) variable_list -> variable .
+
+    RIGHT_PAREN     reduce using rule 17 (variable_list -> variable .)
+    COMMA           reduce using rule 17 (variable_list -> variable .)
+
+
+state 85
+
+    (19) variable -> ID .
+
+    RIGHT_PAREN     reduce using rule 19 (variable -> ID .)
+    COMMA           reduce using rule 19 (variable -> ID .)
+
+
+state 86
+
+    (32) if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .
+
+    $end            reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    RIGHT_BRACE     reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    error           reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    ECHO            reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    PRINT           reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    FSCANF          reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    ID              reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+    IF              reduce using rule 32 (if_statement -> IF LEFT_PAREN condition RIGHT_PAREN block ELSE block .)
+
+
+state 87
+
+    (37) block -> LEFT_BRACE statements RIGHT_BRACE .
+
+    ELSE            reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    $end            reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    RIGHT_BRACE     reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    error           reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    ECHO            reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    PRINT           reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    FSCANF          reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    ID              reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+    IF              reduce using rule 37 (block -> LEFT_BRACE statements RIGHT_BRACE .)
+
+
+state 88
+
+    (39) statements -> statements statement .
+
+    RIGHT_BRACE     reduce using rule 39 (statements -> statements statement .)
+    error           reduce using rule 39 (statements -> statements statement .)
+    ECHO            reduce using rule 39 (statements -> statements statement .)
+    PRINT           reduce using rule 39 (statements -> statements statement .)
+    FSCANF          reduce using rule 39 (statements -> statements statement .)
+    ID              reduce using rule 39 (statements -> statements statement .)
+    IF              reduce using rule 39 (statements -> statements statement .)
+
+
+state 89
+
+    (18) variable_list -> variable_list COMMA . variable
+    (19) variable -> . ID
+
+    ID              shift and go to state 85
+
+    variable                       shift and go to state 91
+
+state 90
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN . SEMICOLON
+
+    SEMICOLON       shift and go to state 92
+
+
+state 91
+
+    (18) variable_list -> variable_list COMMA variable .
+
+    RIGHT_PAREN     reduce using rule 18 (variable_list -> variable_list COMMA variable .)
+    COMMA           reduce using rule 18 (variable_list -> variable_list COMMA variable .)
+
+
+state 92
+
+    (16) fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .
+
+    $end            reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    RIGHT_BRACE     reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    error           reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    ECHO            reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    PRINT           reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    FSCANF          reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    ID              reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+    IF              reduce using rule 16 (fscanf_statement -> FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN SEMICOLON .)
+
+WARNING: 
+WARNING: Conflicts:
+WARNING: 
+WARNING: shift/reduce conflict for LOGICAL_AND in state 75 resolved as shift
+WARNING: shift/reduce conflict for LOGICAL_OR in state 75 resolved as shift
+WARNING: shift/reduce conflict for RELATIONAL_OPERATOR in state 75 resolved as shift
+WARNING: shift/reduce conflict for LOGICAL_AND in state 76 resolved as shift
+WARNING: shift/reduce conflict for LOGICAL_OR in state 76 resolved as shift
+WARNING: shift/reduce conflict for RELATIONAL_OPERATOR in state 76 resolved as shift
+WARNING: shift/reduce conflict for LOGICAL_AND in state 77 resolved as shift
+WARNING: shift/reduce conflict for LOGICAL_OR in state 77 resolved as shift
+WARNING: shift/reduce conflict for RELATIONAL_OPERATOR in state 77 resolved as shift
+WARNING: reduce/reduce conflict in state 33 resolved using rule (expression -> INTEGER)
+WARNING: rejected rule (factor -> INTEGER) in state 33
