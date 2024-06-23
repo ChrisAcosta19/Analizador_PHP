@@ -51,7 +51,7 @@ reserved = {
     'xor': 'XOR',
     'print': 'PRINT',
     'fgets' : 'FGETS',
-    'stdin' : 'STDIN',
+    'STDIN' : 'STDIN',
     'fscanf' : 'FSCANF',
     'echo': 'ECHO',
     'var': 'VAR',
@@ -89,7 +89,6 @@ reserved = {
     'true' : 'TRUE',
     'false' : 'FALSE',
     'array' : 'ARRAY',
-
 }
 
 # List of token names.   This is always required
@@ -122,6 +121,8 @@ tokens = [
     'GREATER_EQUAL',
     'CALL',
     'STRING',
+    'OPEN_TAG',
+    'CLOSE_TAG',
 
     # Peter Miranda
     'EQUALS',
@@ -132,8 +133,6 @@ tokens = [
     'MOD_EQUALS',
     'PLUS_PLUS',
     'MINUS_MINUS',
-    'OPEN_TAG',
-    'CLOSE_TAG',
     'LEFT_BRACE',
     'RIGHT_BRACE',
     'LEFT_BRACKET',
@@ -144,7 +143,11 @@ tokens = [
     'COLON',
     'ONE_LINE_COMMENT',
     'MULTI_LINE_COMMENT',
-    'RELATIONAL_OPERATOR',
+    'EQUAL_TO',
+    'NOT_EQUAL_TO',
+    'IDENTICAL_TO',
+    'NOT_IDENTICAL_TO',
+    'DIFFERENT',
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -191,18 +194,15 @@ def t_FLOAT(t):
     t.value = float(t.value)
     return t
 
-
 def t_NAME(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'NAME')    # Check for reserved words
     return t
 
-
 def t_ID(t):
     r'\$[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'ID')    # Check for reserved words
     return t
-
 
 # A regular expression rule with some action code
 def t_INTEGER(t):
@@ -247,15 +247,16 @@ def t_MULTI_LINE_COMMENT(t):
     #pass
     return t
 
-def t_RELATIONAL_OPERATOR(t):
-    r'==|===|!=|!==|>|>=|<|<='
-    return t
-
 # Comparison operators
 t_LESS_THAN = r'<'
 t_GREATER_THAN = r'>'
 t_LESS_EQUAL = r'<='
 t_GREATER_EQUAL = r'>='
+t_EQUAL_TO = r'=='
+t_NOT_EQUAL_TO = r'!='
+t_IDENTICAL_TO = r'==='
+t_NOT_IDENTICAL_TO = r'!=='
+t_DIFFERENT = r'<>'
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
@@ -266,45 +267,13 @@ def t_error(t):
     log_file.write(error_message + '\n')
     t.lexer.skip(1)
 
-
 # Build the lexer
 lexer = lex.lex()
 
 # Test it out
 data = '''
 <?php
-// Declaración de variables
-$variable1 = 10;
-$variable2 = "Hola, mundo!";
-$variable3 = true;
-// Estructura condicional
-if ($variable1 > 5) {
- echo "El número es mayor que 5";
-} else {
- echo "El número es menor o igual que 5";
-}
-// Bucle
-for ($i = 0; $i < 5; $i++) {
- echo "Iteración número: $i<br>";
-}
-// Operadores aritméticos
-$resultado = $variable1 + 3;
-echo "El resultado de la suma es: $resultado";
-// Operadores lógicos
-if ($variable3 && $variable1 == 10) {
- echo "La variable3 es verdadera y la variable1 es igual a 10";
-}
-// Asignación
-$variable1 += 5;
-echo "El valor de variable1 después de la suma es: $variable1";
-// Arrays
-$miArray = array("manzana", "banana", "naranja");
-echo "El segundo elemento del array es: " . $miArray[1];
-// Funciones
-function miFuncion($parametro1, $parametro2) {
- return $parametro1 * $parametro2;
-}
-echo "El resultado de la función es: " . miFuncion(2, 3);
+
 ?>
 '''
 
@@ -335,5 +304,3 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta {logs_dir}.')
-
-
