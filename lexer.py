@@ -273,7 +273,33 @@ lexer = lex.lex()
 # Test it out
 data = '''
 <?php
+    for ($i = 1; $i <= 10; $i++) {
+        echo $i;
+    }
 
+    for (; ; ) {
+        if ($i > 10) {
+            break;
+        }
+        echo $i;
+        $i++;
+    }
+
+    for ($i = 1; ; $i++) {
+        if ($i > 10) {
+            break;
+        }
+        echo $i;
+    }
+
+    for ($i = 1, $j = 0; $i <= 10; $j += $i, print $i, $i++);
+
+    $i = 1;
+    while ($i <= 10) {
+        echo $i++;  /* el valor presentado sería
+                    $i antes del incremento
+                    (post-incremento) */
+    }
 ?>
 '''
 
@@ -286,7 +312,7 @@ if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "PeterMiranda"
+git_username = "ChrisAcosta19"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
@@ -303,4 +329,4 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
         log_file.write(f'{tok}\n')
 
 # Mensaje de confirmación
-print(f'Archivo de log generado: {log_file_name} en la carpeta {logs_dir}.')
+print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
