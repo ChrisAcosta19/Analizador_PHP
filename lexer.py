@@ -1,7 +1,7 @@
-global log_file
 import os
 from datetime import datetime
 import ply.lex as lex
+global log_file
 
 reserved = {
     '__halt_compiler': 'HALT_COMPILER',
@@ -21,7 +21,6 @@ reserved = {
     'else': 'ELSE',
     'break': 'BREAK',
     'while': 'WHILE',
-    'echo': 'ECHO',
     'for': 'FOR',
     'foreach': 'FOREACH',
     'function': 'FUNCTION',
@@ -51,6 +50,9 @@ reserved = {
     'or': 'OR',
     'xor': 'XOR',
     'print': 'PRINT',
+    'fgets' : 'FGETS',
+    'STDIN' : 'STDIN',
+    'fscanf' : 'FSCANF',
     'echo': 'ECHO',
     'var': 'VAR',
     'global': 'GLOBAL',
@@ -119,6 +121,8 @@ tokens = [
     'GREATER_EQUAL',
     'CALL',
     'STRING',
+    'OPEN_TAG',
+    'CLOSE_TAG',
 
     # Peter Miranda
     'EQUALS',
@@ -129,8 +133,6 @@ tokens = [
     'MOD_EQUALS',
     'PLUS_PLUS',
     'MINUS_MINUS',
-    'OPEN_TAG',
-    'CLOSE_TAG',
     'LEFT_BRACE',
     'RIGHT_BRACE',
     'LEFT_BRACKET',
@@ -138,8 +140,14 @@ tokens = [
     'LEFT_PAREN',
     'RIGHT_PAREN',
     'SEMICOLON',
+    'COLON',
     'ONE_LINE_COMMENT',
     'MULTI_LINE_COMMENT',
+    'EQUAL_TO',
+    'NOT_EQUAL_TO',
+    'IDENTICAL_TO',
+    'NOT_IDENTICAL_TO',
+    'DIFFERENT',
 ] + list(reserved.values())
 
 # Regular expression rules for simple tokens
@@ -149,8 +157,6 @@ t_TIMES = r'\*'
 t_DIVIDE = r'/'
 t_MOD = r'%'
 t_POWER = r'\*\*'
-t_LPAREN = r'\('
-t_RPAREN = r'\)'
 t_COMMA = r','
 t_CALL = r'->'
 t_KEY_VALUE = r'=>'
@@ -180,6 +186,7 @@ t_LEFT_PAREN = r'\('
 t_RIGHT_PAREN = r'\)'
 
 t_SEMICOLON = r'\;'
+t_COLON = r'\:'
 
 #DEFS
 def t_FLOAT(t):
@@ -187,18 +194,15 @@ def t_FLOAT(t):
     t.value = float(t.value)
     return t
 
-
 def t_NAME(t):
     r'[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'NAME')    # Check for reserved words
     return t
 
-
 def t_ID(t):
     r'\$[a-zA-Z_]\w*'
     t.type = reserved.get(t.value, 'ID')    # Check for reserved words
     return t
-
 
 # A regular expression rule with some action code
 def t_INTEGER(t):
@@ -217,15 +221,15 @@ def t_STRING(t):
     return t
 
 def t_LOGICAL_AND(t):
-    r'&&|and'
+    r'&&|and|AND'
     return t
 
 def t_LOGICAL_OR(t):
-    r'\|\||or'
+    r'\|\||or|OR'
     return t
 
 def t_LOGICAL_XOR(t):
-    r'xor'
+    r'xor|XOR'
     return t
 
 def t_LOGICAL_NOT(t):
@@ -248,6 +252,11 @@ t_LESS_THAN = r'<'
 t_GREATER_THAN = r'>'
 t_LESS_EQUAL = r'<='
 t_GREATER_EQUAL = r'>='
+t_EQUAL_TO = r'=='
+t_NOT_EQUAL_TO = r'!='
+t_IDENTICAL_TO = r'==='
+t_NOT_IDENTICAL_TO = r'!=='
+t_DIFFERENT = r'<>'
 
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
@@ -263,89 +272,18 @@ lexer = lex.lex()
 
 # Test it out
 data = '''
-<?php 
-
- 
-// Declaración de variables 
-
-$variable1 = 10; 
-
-$variable2 = "Hola, mundo!"; 
-
-$variable3 = true; 
-
-  
-
-// Estructura condicional 
-
-if ($variable1 > 5) { 
-
-    echo "El número es mayor que 5"; 
-
-} else { 
-
-    echo "El número es menor o igual que 5"; 
-
-} 
-
-  
-
-// Bucle 
-
-for ($i = 0; $i < 5; $i++) { 
-
-    echo "Iteración número: $i<br>"; 
-
-} 
-
-  
-
-// Operadores aritméticos 
-
-$resultado = $variable1 + 3; 
-
-echo "El resultado de la suma es: $resultado"; 
-
-  
-
-// Operadores lógicos 
-
-if ($variable3 && $variable1 == 10) { 
-
-    echo "La variable3 es verdadera y la variable1 es igual a 10"; 
-
-} 
-
-  
-
-// Asignación 
-
-$variable1 += 5; 
-
-echo "El valor de variable1 después de la suma es: $variable1"; 
-
-  
-
-// Arrays 
-
-$miArray = array("manzana", "banana", "naranja"); 
-
-echo "El segundo elemento del array es: " . $miArray[1]; 
-
-  
-
-// Funciones 
-
-function miFuncion($parametro1, $parametro2) { 
-
-    return $parametro1 * $parametro2; 
-
-} 
-
-  
-
-echo "El resultado de la función es: " . miFuncion(2, 3); 
-
+<?php
+    fscanf(STDIN, "%d %s", $var1, $var2);
+    print "Hello, World!";
+    $var = 42;
+    $a = (10 + 5);
+    $b = (20 - 3) * 2 / 4;
+    $c = $a + $b - 15;
+    if ($a > 10 && $b < 20) {
+        $c = $a + $b;
+    } else {
+        $c = $a - $b;
+    }
 ?>
 '''
 
@@ -358,7 +296,7 @@ if not os.path.exists(logs_dir):
     os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "JeffErasLindao"
+git_username = "PeterMiranda"
 log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
 
 # Abrir archivo de log para escritura en la carpeta 'logs'
@@ -375,4 +313,4 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
         log_file.write(f'{tok}\n')
 
 # Mensaje de confirmación
-print(f'Archivo de log generado: {log_file_name} en la carpeta {logs_dir}.')
+print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
