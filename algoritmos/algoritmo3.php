@@ -35,23 +35,6 @@ $count /= 4; // División por 4
 $count++; // Incremento en 1
 $count--; // Decremento en 1
 echo "El valor de count es $count.\n";
-// Switch statement
-echo "Introduce un número del 1 al 3: ";
-$number = (int)trim(fgets(STDIN));
-switch ($number) {
- case 1:
- echo "Elegiste el número uno.\n";
- break;
- case 2:
- echo "Elegiste el número dos.\n";
- break;
- case 3:
- echo "Elegiste el número tres.\n";
- break;
- default:
- echo "Número fuera de rango.\n";
- break;
-}
 /*
  Comentarios de múltiples líneas
  Ejemplo de bucles while y do-while
@@ -62,12 +45,6 @@ while ($i < 3) {
  echo "While loop iteración: $i\n";
  $i++;
 }
-// Bucle do-while
-$j = 0;
-do {
- echo "Do-while loop iteración: $j\n";
- $j++;
-} while ($j < 3);
 // Otros operadores relacionales
 $a = 5;
 $b = 10;

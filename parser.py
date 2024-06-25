@@ -34,19 +34,20 @@ def p_statement(p):
                  | assignment_statement
                  | array_declaration_statement
                  | BREAK
-                 | CONTINUE'''
+                 | CONTINUE
+                 | function_call'''
     p[0] = p[1]
 
 # Gramática para INPUT
 ###fgets(STDIN)
 def p_fgets_statement(p):
     '''fgets_statement : FGETS LEFT_PAREN STDIN RIGHT_PAREN'''
-    p[0] = ('fgets', p[3])
+    p[0] = (p[1], p[3])
 
 ###fscanf(STDIN, "formato", $variables...)
 def p_fscanf_statement(p):
     '''fscanf_statement : FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN'''
-    p[0] = ('fscanf', p[3], p[5], p[7])
+    p[0] = (p[1], p[3], p[5], p[7])
 
 def p_variable_list(p):
     '''variable_list : variable
@@ -61,6 +62,16 @@ def p_variable(p):
     '''variable : ID'''
     p[0] = p[1]
 
+# Gramática para ASIGNACION
+def p_assignment_statement(p):
+    '''assignment_statement : variable assignment_operator argument
+                            | variable PLUS_PLUS
+                            | variable MINUS_MINUS'''
+    if len(p) == 4:
+        p[0] = ('assignment', p[1], p[2], p[3])
+    else:
+        p[0] = ('increment', p[1], p[2])
+
 def p_assignment_operator(p):
     '''assignment_operator : EQUALS
                            | PLUS_EQUALS
@@ -69,16 +80,6 @@ def p_assignment_operator(p):
                            | DIVIDE_EQUALS
                            | MOD_EQUALS'''
     p[0] = p[1]
-
-# Gramática para ASIGNACION
-def p_assignment_statement(p):
-    '''assignment_statement : variable assignment_operator argument
-                             | variable PLUS_PLUS
-                             | variable MINUS_MINUS'''
-    if len(p) == 4:
-        p[0] = ('assignment', p[1], p[2], p[3])
-    else:
-        p[0] = ('increment', p[1], p[2])
 
 # Gramática para PRINT
 def p_print_statement(p):
@@ -104,14 +105,17 @@ def p_arguments(p):
         p[0] = p[1]
 
 def p_argument(p):
-    '''argument : INTEGER
-                | FLOAT
-                | STRING
-                | variable                
+    '''argument : STRING                
                 | expression
-                | condition
-                | assignment_statement'''
-    p[0] = p[1]
+                | assignment_statement
+                | function_call
+                | fgets_statement
+                | array_indexing
+                | casting argument'''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = (p[1], p[2])
 
 # Gramática para OPERACIONES + & -
 def p_expression_arithmetic(p):
@@ -135,30 +139,47 @@ def p_term(p):
 def p_factor(p):
     '''factor : INTEGER
               | FLOAT
-              | variable
+              | condition
               | LEFT_PAREN expression RIGHT_PAREN'''
-    if isinstance(p[1], str) and p[1].startswith('$'):
-        p[0] = ('variable', p[1])  
-    elif isinstance(p[1], int):
-        p[0] = ('integer', p[1])
-    elif isinstance(p[1], float):
-        p[0] = ('float', p[1])   
+    if len(p) == 2:
+        p[0] = p[1]
     else:
-        p[0] = p[2]    
-     
+        p[0] = p[2]
+
 # Gramática para IF
 def p_if_statement(p):
-    '''if_statement : IF LEFT_PAREN condition RIGHT_PAREN block
-                    | IF LEFT_PAREN condition RIGHT_PAREN block ELSE block'''
-    if len(p) == 6:
-        p[0] = ('if', p[3], p[5])
+    'if_statement : IF parenthesized_condition block else_if_extended if_part3'
+    p[0] = (p[1], p[2], p[3], p[4], p[5])
+
+def p_else_if_extended(p):
+    '''else_if_extended : if_part2
+                        | else_if_extended if_part2'''
+    if len(p) == 2:
+        p[0] = [p[1]]
     else:
-        p[0] = ('if-else', p[3], p[5], p[7])
+        p[1].append(p[2])
+        p[0] = p[1]
+
+def p_else_if_statement(p):
+    '''if_part2 : ELSEIF parenthesized_condition block
+                | '''
+    if len(p) == 4:
+        p[0] = (p[1], p[2], p[3])
+    else:
+        p[0] = []
+
+def p_else_statement(p):
+    '''if_part3 : ELSE block
+                |'''
+    if len(p) == 3:
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = []
 
 # Gramática para WHILE
 def p_while_statement(p):
-    '''while_statement : WHILE LEFT_PAREN condition RIGHT_PAREN block'''
-    p[0] = ('while', p[3], p[5])
+    '''while_statement : WHILE parenthesized_condition block'''
+    p[0] = (p[1], p[2], p[3])
 
 # Gramática para FOR
 def p_for_part1(p):
@@ -217,18 +238,34 @@ def p_block(p):
         p[0] = []
 
 def p_condition(p):
-    '''condition : TRUE
-                 | FALSE
-                 | expression relational_operator expression
-                 | condition logical_operator condition
-                 | LOGICAL_NOT condition
-                 | LEFT_PAREN condition RIGHT_PAREN'''
-    if len(p) == 2:
-        p[0] = p[1]
-    elif len(p) == 3:
-        p[0] = (p[1], p[2])
-    else:
-        p[0] = (p[2], p[1], p[3])
+    '''condition : simple_condition
+                 | negated_condition
+                 | complex_condition
+                 | parenthesized_condition'''
+    p[0] = p[1]
+
+def p_simple_condition(p):
+    '''simple_condition : TRUE
+                        | FALSE
+                        | variable
+                        | relational_expression'''
+    p[0] = p[1]
+
+def p_negated_condition(p):
+    'negated_condition : LOGICAL_NOT condition'
+    p[0] = (p[1], p[2])
+
+def p_complex_condition(p):
+    'complex_condition : condition logical_operator condition'
+    p[0] = (p[2], p[1], p[3])
+
+def p_parenthesized_condition(p):
+    'parenthesized_condition : LEFT_PAREN condition RIGHT_PAREN'
+    p[0] = p[2]
+
+def p_relational_expression(p):
+    '''relational_expression : expression relational_operator expression'''
+    p[0] = (p[2], p[1], p[3])
 
 def p_relational_operator(p):
     '''relational_operator : EQUAL_TO
@@ -248,16 +285,20 @@ def p_logical_operator(p):
                         | LOGICAL_XOR'''
     p[0] = p[1]
 
-# Gramática para ERROR MSG
-def p_error(p):
-    if p:
-        print(f"Syntax error at token '{p.value}'")
-        return
-    else:
-        print("Syntax error at EOF")
+def p_casting(p):
+    'casting : LEFT_PAREN casting_type RIGHT_PAREN'
+    p[0] = p[2]
+
+def p_casting_type(p):
+    '''casting_type : INT_TYPE
+                    | FLOAT_TYPE'''
+    p[0] = p[1]
+
+def p_function_call(p):
+    'function_call : NAME LEFT_PAREN array_elements RIGHT_PAREN'
+    p[0] = (p[1], p[3])
 
 # Gramática para ARRAYS
-
 def p_array_declaration_statement(p):
     '''array_declaration_statement : variable EQUALS array'''
     p[0] = ('array_declaration', p[1], p[3])
@@ -265,7 +306,10 @@ def p_array_declaration_statement(p):
 def p_array(p):
     '''array : ARRAY LEFT_PAREN array_elements RIGHT_PAREN
              | LEFT_BRACKET array_elements RIGHT_BRACKET'''
-    p[0] = p[3]
+    if len(p) == 5:
+        p[0] = p[3]
+    else:
+        p[0] = p[2]
 
 def p_array_elements(p):
     '''array_elements : argument
@@ -275,6 +319,18 @@ def p_array_elements(p):
     else:
         p[1].append(p[3])
         p[0] = p[1]
+
+def p_array_indexing(p):
+    '''array_indexing : variable LEFT_BRACKET INTEGER RIGHT_BRACKET'''
+    p[0] = ('array_indexing', p[1], p[3])
+
+# Gramática para ERROR MSG
+def p_error(p):
+    if p:
+        print(f"Syntax error at token {p}")
+        return
+    else:
+        print("Syntax error at EOF")
 
 # Construir el parser
 parser = yacc.yacc()

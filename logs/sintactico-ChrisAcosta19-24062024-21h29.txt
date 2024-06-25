@@ -1,0 +1,60 @@
+// Solicitud de datos en línea de comandos
+('echo', ['"Introduce tu nombre: "'])
+('assignment', '$name', '=', ('trim', [('fgets', 'STDIN')]))
+('echo', ['"Introduce tu edad: "'])
+('assignment', '$age', '=', ('int', ('trim', [('fgets', 'STDIN')])))
+('echo', ['"Introduce tu altura en metros (por ejemplo, 1.75): "'])
+('assignment', '$height', '=', ('float', ('trim', [('fgets', 'STDIN')])))
+// Flotantes y operadores aritméticos
+('assignment', '$weight', '=', 70.5)
+// Peso en kilogramos
+('assignment', '$bmi', '=', ('/', '$weight', ('*', '$height', '$height')))
+// Índice de Masa Corporal (IMC)
+('echo', ['"Hola, $name. Tu IMC es "', '$bmi', '".\n"'])
+// Enumeraciones (simuladas con arrays)
+('array_declaration', '$colors', ['"RED"', '"GREEN"', '"BLUE"'])
+('assignment', '$favoriteColor', '=', ('array_indexing', '$colors', 1))
+// Asignando "GREEN"
+('echo', ['"Tu color favorito es $favoriteColor.\n"'])
+// Operadores lógicos y relacionales
+('assignment', '$isAdult', '=', ('>=', '$age', 18))
+('assignment', '$isTall', '=', ('>', '$height', 1.75))
+('if', ('&&', '$isAdult', '$isTall'), [('echo', ['"Eres adulto y alto.\n"'])], [('elseif', ('&&', '$isAdult', ('!', '$isTall')), [('echo', ['"Eres adulto pero no alto.\n"'])]), ('elseif', ('!', ('&&', '$isAdult', '$isTall')), [('echo', ['"Eres alto pero no adulto.\n"'])])], ('else', [('echo', ['"No eres ni adulto ni alto.\n"'])]))
+// Operadores de asignación
+('assignment', '$count', '=', 0)
+('assignment', '$count', '+=', 10)
+// Incremento en 10
+('assignment', '$count', '-=', 2)
+// Decremento en 2
+('assignment', '$count', '*=', 3)
+// Multiplicación por 3
+('assignment', '$count', '/=', 4)
+// División por 4
+('increment', '$count', '++')
+// Incremento en 1
+('increment', '$count', '--')
+// Decremento en 1
+('echo', ['"El valor de count es $count.\n"'])
+/*
+    Comentarios de múltiples líneas
+    Ejemplo de bucles while y do-while
+    */
+// Bucle while
+('assignment', '$i', '=', 0)
+('while', ('<', '$i', 3), [('echo', ['"While loop iteración: $i\n"']), ('increment', '$i', '++')])
+// Otros operadores relacionales
+('assignment', '$a', '=', 5)
+('assignment', '$b', '=', 10)
+('assignment', '$c', '=', 5)
+('echo', ['"a == b: "', ('var_export', [('==', '$a', '$b'), 'true']), '"\n"'])
+// false
+('echo', ['"a != b: "', ('var_export', [('!=', '$a', '$b'), 'true']), '"\n"'])
+// true
+('echo', ['"a < b: "', ('var_export', [('<', '$a', '$b'), 'true']), '"\n"'])
+// true
+('echo', ['"a > b: "', ('var_export', [('>', '$a', '$b'), 'true']), '"\n"'])
+// false
+('echo', ['"a <= c: "', ('var_export', [('<=', '$a', '$c'), 'true']), '"\n"'])
+// true
+('echo', ['"a >= c: "', ('var_export', [('>=', '$a', '$c'), 'true']), '"\n"'])
+// true
