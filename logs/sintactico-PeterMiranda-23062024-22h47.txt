@@ -1,7 +1,0 @@
-('fscanf', 'STDIN', '"%d %s"', ['$var1', '$var2'])
-('print', ['"Hello, World!"'])
-('assignment', '$var', '=', 42)
-('assignment', '$a', '=', ('+', ('integer', 10), ('integer', 5)))
-('assignment', '$b', '=', ('/', ('*', ('-', ('integer', 20), ('integer', 3)), ('integer', 2)), ('integer', 4)))
-('assignment', '$c', '=', ('-', ('+', ('variable', '$a'), ('variable', '$b')), ('integer', 15)))
-('if-else', ('&&', ('>', ('variable', '$a'), ('integer', 10)), ('<', ('variable', '$b'), ('integer', 20))), [('assignment', '$c', '=', ('+', ('variable', '$a'), ('variable', '$b')))], [('assignment', '$c', '=', ('-', ('variable', '$a'), ('variable', '$b')))])

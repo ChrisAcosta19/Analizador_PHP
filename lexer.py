@@ -23,7 +23,6 @@ reserved = {
     'while': 'WHILE',
     'for': 'FOR',
     'foreach': 'FOREACH',
-    'function': 'FUNCTION',
     'return': 'RETURN',
     'class': 'CLASS',
     'interface': 'INTERFACE',
@@ -47,6 +46,7 @@ reserved = {
     'include': 'INCLUDE',
     'const': 'CONST',
     'print': 'PRINT',
+    'function': 'FUNCTION',
     'fgets' : 'FGETS',
     'STDIN' : 'STDIN',
     'fscanf' : 'FSCANF',
@@ -62,7 +62,7 @@ reserved = {
     'include_once': 'INCLUDE_ONCE',
     'require_once': 'REQUIRE_ONCE',
     'yield': 'YIELD',
-    'yield from': 'YIELD_FROM',
+    'yield_from': 'YIELD_FROM',
     'as': 'AS',
     'endswitch': 'ENDSWITCH',
     'callable': 'CALLABLE',
@@ -88,6 +88,15 @@ reserved = {
     'array' : 'ARRAY',
     'int' : 'INT_TYPE',
     'float' : 'FLOAT_TYPE',
+    'push': 'PUSH',
+    'pop': 'POP',
+    'set': 'SET',
+    'dictionary': 'DICTIONARY',
+    'iterator': 'ITERATOR',
+    'add_child': 'ADD_CHILD',
+    'lambda': 'LAMBDA',
+    'return': 'RETURN',
+    '=>': 'ARROW',
 }
 
 # List of token names.   This is always required
@@ -124,6 +133,14 @@ tokens = [
     'RPAREN',
     'KEY_VALUE',
     'DOT',
+    'APPEND',
+    'APPENDLEFT',
+    'POPLEFT',
+    'ENQUEUE',
+    'DEQUEUE',
+    'object_declaration',
+    
+    # Peter Miranda
     'EQUALS',
     'PLUS_EQUALS',
     'MINUS_EQUALS',
@@ -167,6 +184,8 @@ t_CALL = r'->'
 t_KEY_VALUE = r'=>'
 t_DOT = r'\.'
 t_LOGICAL_NOT = r'!'
+t_PUSH = r'push'
+t_POP = r'pop'
 
 # Assignment Operators - PM
 t_EQUALS = r'\='
@@ -193,6 +212,7 @@ t_RIGHT_PAREN = r'\)'
 
 t_SEMICOLON = r'\;'
 t_COLON = r'\:'
+
 
 #DEFS
 def t_ID(t):
@@ -249,6 +269,31 @@ def t_MULTI_LINE_COMMENT(t):
     #pass
     return t
 
+def t_APPEND(t):
+    r'append'
+    return t
+
+def t_APPENDLEFT(t):
+    r'appendleft'
+    return t
+
+def t_POPLEFT(t):
+    r'popleft'
+    return t
+
+def t_ENQUEUE(t):
+    r'enqueue'
+    return t
+
+def t_DEQUEUE(t):
+    r'dequeue'
+    return t
+
+def t_object_declaration(t):
+    r'object\s+[a-zA-Z_]\w*'
+    t.type = reserved.get(t.value, 'object_declaration')
+    return t
+
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
 
@@ -262,6 +307,7 @@ def t_error(t):
 lexer = lex.lex()
 
 # Test it out
+# Ejemplo de prueba
 data = '''
 <?php
     // Solicitud de datos en línea de comandos

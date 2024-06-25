@@ -4,9 +4,11 @@ from datetime import datetime
 from lexer import tokens, data, logs_dir, git_username
 global log_file
 
+
 def p_program(p):
     '''program : OPEN_TAG statements CLOSE_TAG'''
-    p[0] = p[2]
+    p[0] = p[2] 
+
 
 def p_statements(p):
     '''statements : statement2
@@ -17,14 +19,18 @@ def p_statements(p):
         p[1].append(p[2])
         p[0] = p[1]
 
+
 def p_statement2(p):
     '''statement2 : statement SEMICOLON
                   | if_statement
                   | while_statement
                   | for_statement
+                  | statement_return
+                  | function_statement
                   | ONE_LINE_COMMENT
                   | MULTI_LINE_COMMENT'''
     p[0] = p[1]
+
 
 # Reglas de producción
 def p_statement(p):
@@ -37,6 +43,29 @@ def p_statement(p):
                  | CONTINUE
                  | function_call'''
     p[0] = p[1]
+
+
+# Gramática para funciones regulares
+def p_function_statement(p):
+    '''function_statement : FUNCTION NAME LEFT_PAREN arguments RIGHT_PAREN block'''
+    p[0] = ('function_statement', p[2], p[5])
+   
+# Gramática para funciones lambda
+def p_lambda_function(p):
+    '''lambda_function : LAMBDA arguments COLON expression'''
+    p[0] = ('lambda_function', p[2], p[4])
+
+
+# Gramática para funciones de flecha
+def p_arrow_function(p):
+    '''arrow_function : ARROW arguments ARROW expression'''
+    p[0] = ('arrow_function', p[2], p[4])
+
+
+def p_statement_return(p):
+    '''statement_return : RETURN expression SEMICOLON'''
+    p[0] = ('return', p[2])
+
 
 # Gramática para INPUT
 ###fgets(STDIN)
@@ -97,7 +126,8 @@ def p_print_function(p):
 
 def p_arguments(p):
     '''arguments : argument
-                 | arguments DOT argument'''
+                 | arguments DOT argument
+                 | arguments COMMA argument'''
     if len(p) == 2:
         p[0] = [p[1]]
     else:
@@ -332,6 +362,171 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
+# ->Gramática para LISTAS
+def p_list(p):
+    '''list : LEFT_BRACKET elements RIGHT_BRACKET'''
+    p[0] = ('list', p[2])
+
+def p_elements(p):
+    '''elements : argument
+                | elements COMMA argument'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+
+# ->Gramática para STACKS
+class Stack:
+    def __init__(self):
+        self.items = []
+
+    def push(self, item):
+        self.items.append(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+def p_stack_operations(p):
+    '''stack_operations : PUSH argument
+                        | POP'''
+    if p[1] == 'push':
+        p[0] = ('stack_push', p[2])
+    else:
+        p[0] = ('stack_pop',)
+
+
+# ->Gramática para QUEUE
+from collections import deque
+class Queue:
+    def __init__(self):
+        self.items = deque()
+
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        return self.items.popleft()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+def p_queue_operations(p):
+    '''queue_operations : ENQUEUE argument
+                        | DEQUEUE'''
+    if p[1] == 'enqueue':
+        p[0] = ('queue_enqueue', p[2])
+    else:
+        p[0] = ('queue_dequeue',)
+
+# Regla para operaciones de deque
+class Deque:
+    def __init__(self):
+        self.items = deque()
+
+    def append(self, item):
+        self.items.append(item)
+
+    def appendleft(self, item):
+        self.items.appendleft(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def popleft(self):
+        return self.items.popleft()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+def p_deque_operations(p):
+    '''deque_operations : APPEND argument
+                        | APPENDLEFT argument
+                        | POP
+                        | POPLEFT'''
+    if p[1] == 'append':
+        p[0] = ('deque_append', p[2])
+    elif p[1] == 'appendleft':
+        p[0] = ('deque_appendleft', p[2])
+    elif p[1] == 'pop':
+        p[0] = ('deque_pop',)
+    else:
+        p[0] = ('deque_popleft',)
+
+
+# ->Gramática para SETS
+def p_set_declaration(p):
+    '''set_declaration : SET LEFT_BRACE set_elements RIGHT_BRACE'''
+    p[0] = ('set_declaration', p[3])
+
+def p_set_elements(p):
+    '''set_elements : argument
+                    | set_elements COMMA argument'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+
+# ->Gramática para DICCIONARIOS
+def p_dictionary_declaration(p):
+    '''dictionary_declaration : DICTIONARY LEFT_BRACE dictionary_elements RIGHT_BRACE'''
+    p[0] = ('dictionary_declaration', p[3])
+
+def p_dictionary_elements(p):
+    '''dictionary_elements : key_value_pair
+                           | dictionary_elements COMMA key_value_pair'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+def p_key_value_pair(p):
+    '''key_value_pair : STRING COLON argument'''
+    p[0] = (p[1], p[3])
+
+
+# ->Gramática para ITERATOR
+class CustomIterator:
+    def __init__(self, data):
+        self.index = 0
+        self.data = data
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index >= len(self.data):
+            raise StopIteration
+        value = self.data[self.index]
+        self.index += 1
+        return value
+
+def p_iterator_declaration(p):
+    '''iterator_declaration : ITERATOR LEFT_BRACKET elements RIGHT_BRACKET'''
+    p[0] = ('iterator_declaration', p[3])
+
+
+# ->Gramática para TREE
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.children = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+def p_tree_operations(p):
+    '''tree_operations : ADD_CHILD argument'''
+    p[0] = ('tree_add_child', p[2])
+    
+
 # Construir el parser
 parser = yacc.yacc()
 
@@ -343,6 +538,7 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
     result = parser.parse(data)
     for line in result:
         log_file.write(f'{line}\n')
+
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
