@@ -1,0 +1,22 @@
+// Declaración de variables
+('assignment', '$variable1', '=', 10)
+('assignment', '$variable2', '=', '"Hola, mundo!"')
+('assignment', '$variable3', '=', 'true')
+// Estructura condicional
+('if', ('>', '$variable1', 5), [('echo', ['"El número es mayor que 5"'])], [[]], ('else', [('echo', ['"El número es menor o igual que 5"'])]))
+// Bucle
+(('for', [('assignment', '$i', '=', 0)]), ('<', '$i', 5), ([('increment', '$i', '++')], [('echo', ['"Iteración número: $i<br>"'])]))
+// Operadores aritméticos
+('assignment', '$resultado', '=', ('+', '$variable1', 3))
+('echo', ['"El resultado de la suma es: $resultado"'])
+// Asignación
+('assignment', '$variable1', '+=', 5)
+('echo', ['"El valor de variable1 después de la suma es: $variable1"'])
+// Arrays
+('array_declaration', '$miArray', ['"manzana"', '"banana"', '"naranja"'])
+('echo', ['"El segundo elemento del array es: "', ('array_indexing', '$miArray', 1)])
+// Funciones
+('function', 'miFuncion', ['$parametro1', '$parametro2'], [('return', ('*', '$parametro1', '$parametro2'))])
+('echo', ['"El resultado de la función es: "', ('miFuncion', [2, 3])])
+// While
+('while', ('<', '$i', 10), [('echo', ['$i']), ('increment', '$i', '++')])

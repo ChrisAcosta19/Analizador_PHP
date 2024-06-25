@@ -28,12 +28,12 @@ $miArray = array("manzana", "banana", "naranja");
 echo "El segundo elemento del array es: " . $miArray[1];
 // Funciones
 function miFuncion($parametro1, $parametro2) {
- return $parametro1 * $parametro2;
+    return $parametro1 * $parametro2;
 }
 echo "El resultado de la función es: " . miFuncion(2, 3);
 // While
-while (i < 10) {
-    echo i;
-    i++;
+while ($i < 10) {
+    echo $i;
+    $i++;
 }
 ?>
