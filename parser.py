@@ -51,16 +51,16 @@ def p_function_statement(p):
     '''function_statement : FUNCTION NAME LEFT_PAREN arguments RIGHT_PAREN block'''
     p[0] = ('function', p[2], p[4], p[6])
    
-# # Gramática para funciones lambda
-# def p_lambda_function(p):
-#     '''lambda_function : LAMBDA arguments COLON expression'''
-#     p[0] = ('lambda_function', p[2], p[4])
+# Gramática para funciones lambda
+def p_lambda_function(p):
+    '''lambda_function : LAMBDA arguments COLON expression'''
+    p[0] = ('lambda_function', p[2], p[4])
 
 
-# # Gramática para funciones de flecha
-# def p_arrow_function(p):
-#     '''arrow_function : ARROW arguments ARROW expression'''
-#     p[0] = ('arrow_function', p[2], p[4])
+# Gramática para funciones de flecha
+def p_arrow_function(p):
+    '''arrow_function : ARROW arguments ARROW expression'''
+    p[0] = ('arrow_function', p[2], p[4])
 
 
 def p_statement_return(p):
@@ -364,169 +364,169 @@ def p_error(p):
     else:
         print("Syntax error at EOF")
 
-# # ->Gramática para LISTAS
-# def p_list(p):
-#     '''list : LEFT_BRACKET elements RIGHT_BRACKET'''
-#     p[0] = ('list', p[2])
+# ->Gramática para LISTAS
+def p_list(p):
+    '''list : LEFT_BRACKET elements RIGHT_BRACKET'''
+    p[0] = ('list', p[2])
 
-# def p_elements(p):
-#     '''elements : argument
-#                 | elements COMMA argument'''
-#     if len(p) == 2:
-#         p[0] = [p[1]]
-#     else:
-#         p[1].append(p[3])
-#         p[0] = p[1]
-
-
-# # ->Gramática para STACKS
-# class Stack:
-#     def __init__(self):
-#         self.items = []
-
-#     def push(self, item):
-#         self.items.append(item)
-
-#     def pop(self):
-#         return self.items.pop()
-
-#     def is_empty(self):
-#         return len(self.items) == 0
-
-# def p_stack_operations(p):
-#     '''stack_operations : PUSH argument
-#                         | POP'''
-#     if p[1] == 'push':
-#         p[0] = ('stack_push', p[2])
-#     else:
-#         p[0] = ('stack_pop',)
+def p_elements(p):
+    '''elements : argument
+                | elements COMMA argument'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
 
 
-# # ->Gramática para QUEUE
-# from collections import deque
-# class Queue:
-#     def __init__(self):
-#         self.items = deque()
+# ->Gramática para STACKS
+class Stack:
+    def __init__(self):
+        self.items = []
 
-#     def enqueue(self, item):
-#         self.items.append(item)
+    def push(self, item):
+        self.items.append(item)
 
-#     def dequeue(self):
-#         return self.items.popleft()
+    def pop(self):
+        return self.items.pop()
 
-#     def is_empty(self):
-#         return len(self.items) == 0
+    def is_empty(self):
+        return len(self.items) == 0
 
-# def p_queue_operations(p):
-#     '''queue_operations : ENQUEUE argument
-#                         | DEQUEUE'''
-#     if p[1] == 'enqueue':
-#         p[0] = ('queue_enqueue', p[2])
-#     else:
-#         p[0] = ('queue_dequeue',)
-
-# # Regla para operaciones de deque
-# class Deque:
-#     def __init__(self):
-#         self.items = deque()
-
-#     def append(self, item):
-#         self.items.append(item)
-
-#     def appendleft(self, item):
-#         self.items.appendleft(item)
-
-#     def pop(self):
-#         return self.items.pop()
-
-#     def popleft(self):
-#         return self.items.popleft()
-
-#     def is_empty(self):
-#         return len(self.items) == 0
-
-# def p_deque_operations(p):
-#     '''deque_operations : APPEND argument
-#                         | APPENDLEFT argument
-#                         | POP
-#                         | POPLEFT'''
-#     if p[1] == 'append':
-#         p[0] = ('deque_append', p[2])
-#     elif p[1] == 'appendleft':
-#         p[0] = ('deque_appendleft', p[2])
-#     elif p[1] == 'pop':
-#         p[0] = ('deque_pop',)
-#     else:
-#         p[0] = ('deque_popleft',)
+def p_stack_operations(p):
+    '''stack_operations : PUSH argument
+                        | POP'''
+    if p[1] == 'push':
+        p[0] = ('stack_push', p[2])
+    else:
+        p[0] = ('stack_pop',)
 
 
-# # ->Gramática para SETS
-# def p_set_declaration(p):
-#     '''set_declaration : SET LEFT_BRACE set_elements RIGHT_BRACE'''
-#     p[0] = ('set_declaration', p[3])
+# ->Gramática para QUEUE
+from collections import deque
+class Queue:
+    def __init__(self):
+        self.items = deque()
 
-# def p_set_elements(p):
-#     '''set_elements : argument
-#                     | set_elements COMMA argument'''
-#     if len(p) == 2:
-#         p[0] = [p[1]]
-#     else:
-#         p[1].append(p[3])
-#         p[0] = p[1]
+    def enqueue(self, item):
+        self.items.append(item)
+
+    def dequeue(self):
+        return self.items.popleft()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+def p_queue_operations(p):
+    '''queue_operations : ENQUEUE argument
+                        | DEQUEUE'''
+    if p[1] == 'enqueue':
+        p[0] = ('queue_enqueue', p[2])
+    else:
+        p[0] = ('queue_dequeue',)
+
+# Regla para operaciones de deque
+class Deque:
+    def __init__(self):
+        self.items = deque()
+
+    def append(self, item):
+        self.items.append(item)
+
+    def appendleft(self, item):
+        self.items.appendleft(item)
+
+    def pop(self):
+        return self.items.pop()
+
+    def popleft(self):
+        return self.items.popleft()
+
+    def is_empty(self):
+        return len(self.items) == 0
+
+def p_deque_operations(p):
+    '''deque_operations : APPEND argument
+                        | APPENDLEFT argument
+                        | POP
+                        | POPLEFT'''
+    if p[1] == 'append':
+        p[0] = ('deque_append', p[2])
+    elif p[1] == 'appendleft':
+        p[0] = ('deque_appendleft', p[2])
+    elif p[1] == 'pop':
+        p[0] = ('deque_pop',)
+    else:
+        p[0] = ('deque_popleft',)
 
 
-# # ->Gramática para DICCIONARIOS
-# def p_dictionary_declaration(p):
-#     '''dictionary_declaration : DICTIONARY LEFT_BRACE dictionary_elements RIGHT_BRACE'''
-#     p[0] = ('dictionary_declaration', p[3])
+# ->Gramática para SETS
+def p_set_declaration(p):
+    '''set_declaration : SET LEFT_BRACE set_elements RIGHT_BRACE'''
+    p[0] = ('set_declaration', p[3])
 
-# def p_dictionary_elements(p):
-#     '''dictionary_elements : key_value_pair
-#                            | dictionary_elements COMMA key_value_pair'''
-#     if len(p) == 2:
-#         p[0] = [p[1]]
-#     else:
-#         p[1].append(p[3])
-#         p[0] = p[1]
-
-# def p_key_value_pair(p):
-#     '''key_value_pair : STRING COLON argument'''
-#     p[0] = (p[1], p[3])
+def p_set_elements(p):
+    '''set_elements : argument
+                    | set_elements COMMA argument'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
 
 
-# # ->Gramática para ITERATOR
-# class CustomIterator:
-#     def __init__(self, data):
-#         self.index = 0
-#         self.data = data
+# ->Gramática para DICCIONARIOS
+def p_dictionary_declaration(p):
+    '''dictionary_declaration : DICTIONARY LEFT_BRACE dictionary_elements RIGHT_BRACE'''
+    p[0] = ('dictionary_declaration', p[3])
 
-#     def __iter__(self):
-#         return self
+def p_dictionary_elements(p):
+    '''dictionary_elements : key_value_pair
+                           | dictionary_elements COMMA key_value_pair'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
 
-#     def __next__(self):
-#         if self.index >= len(self.data):
-#             raise StopIteration
-#         value = self.data[self.index]
-#         self.index += 1
-#         return value
-
-# def p_iterator_declaration(p):
-#     '''iterator_declaration : ITERATOR LEFT_BRACKET elements RIGHT_BRACKET'''
-#     p[0] = ('iterator_declaration', p[3])
+def p_key_value_pair(p):
+    '''key_value_pair : STRING COLON argument'''
+    p[0] = (p[1], p[3])
 
 
-# #->Gramática para TREE
-# class TreeNode:
-#     def __init__(self, value):
-#         self.value = value
-#         self.children = []
+# ->Gramática para ITERATOR
+class CustomIterator:
+    def __init__(self, data):
+        self.index = 0
+        self.data = data
 
-#     def add_child(self, child_node):
-#         self.children.append(child_node)
+    def __iter__(self):
+        return self
 
-# def p_tree_operations(p):
-#     '''tree_operations : ADD_CHILD argument'''
-#     p[0] = ('tree_add_child', p[2])
+    def __next__(self):
+        if self.index >= len(self.data):
+            raise StopIteration
+        value = self.data[self.index]
+        self.index += 1
+        return value
+
+def p_iterator_declaration(p):
+    '''iterator_declaration : ITERATOR LEFT_BRACKET elements RIGHT_BRACKET'''
+    p[0] = ('iterator_declaration', p[3])
+
+
+#->Gramática para TREE
+class TreeNode:
+    def __init__(self, value):
+        self.value = value
+        self.children = []
+
+    def add_child(self, child_node):
+        self.children.append(child_node)
+
+def p_tree_operations(p):
+    '''tree_operations : ADD_CHILD argument'''
+    p[0] = ('tree_add_child', p[2])
     
 
 # Construir el parser
