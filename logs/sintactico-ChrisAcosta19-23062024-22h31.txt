@@ -1,6 +1,0 @@
-(('for', [('assignment', '$i', '=', 1)]), ('<=', ('variable', '$i'), ('integer', 10)), ([('increment', '$i', '++')], [('echo', ['$i'])]))
-('for', [('if', ('>', ('variable', '$i'), ('integer', 10)), ['break']), ('echo', ['$i']), ('increment', '$i', '++')])
-(('for', [('assignment', '$i', '=', 1)]), ([('increment', '$i', '++')], [('if', ('>', ('variable', '$i'), ('integer', 10)), ['break']), ('echo', ['$i'])]))
-(('for', [('assignment', '$i', '=', 1), ('assignment', '$j', '=', 0)]), ('<=', ('variable', '$i'), ('integer', 10)), ([('assignment', '$j', '+=', '$i'), ('print', ['$i']), ('increment', '$i', '++')], ';'))
-('assignment', '$i', '=', 1)
-('while', ('<=', ('variable', '$i'), ('integer', 10)), [('echo', [('increment', '$i', '++')]), '/* el valor presentado sería\n                    $i antes del incremento\n                    (post-incremento) */'])
