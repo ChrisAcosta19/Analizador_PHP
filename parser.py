@@ -25,7 +25,6 @@ def p_statement2(p):
                   | if_statement
                   | while_statement
                   | for_statement
-                  | statement_return
                   | function_statement
                   | ONE_LINE_COMMENT
                   | MULTI_LINE_COMMENT'''
@@ -41,7 +40,8 @@ def p_statement(p):
                  | array_declaration_statement
                  | BREAK
                  | CONTINUE
-                 | function_call'''
+                 | function_call
+                 | statement_return'''
     p[0] = p[1]
 
 
@@ -513,7 +513,7 @@ def p_iterator_declaration(p):
     p[0] = ('iterator_declaration', p[3])
 
 
-# ->Gramática para TREE
+#->Gramática para TREE
 class TreeNode:
     def __init__(self, value):
         self.value = value
