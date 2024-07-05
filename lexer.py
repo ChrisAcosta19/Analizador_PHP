@@ -327,6 +327,10 @@ for ($i = 0; $i < 5; $i++) {
 // Operadores aritméticos
 $resultado = $variable1 + 3;
 echo "El resultado de la suma es: $resultado";
+// Operadores lógicos
+if ($variable3 && $variable1 == 10) {
+ echo "La variable3 es verdadera y la variable1 es igual a 10";
+}
 // Asignación
 $variable1 += 5;
 echo "El valor de variable1 después de la suma es: $variable1";

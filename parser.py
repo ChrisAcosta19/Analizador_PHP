@@ -4,11 +4,9 @@ from datetime import datetime
 from lexer import tokens, data, logs_dir, git_username
 global log_file
 
-
 def p_program(p):
     '''program : OPEN_TAG statements CLOSE_TAG'''
-    p[0] = p[2] 
-
+    p[0] = p[2]
 
 def p_statements(p):
     '''statements : statement2
@@ -19,7 +17,6 @@ def p_statements(p):
         p[1].append(p[2])
         p[0] = p[1]
 
-
 def p_statement2(p):
     '''statement2 : statement SEMICOLON
                   | if_statement
@@ -27,10 +24,8 @@ def p_statement2(p):
                   | for_statement
                   | function_statement
                   | ONE_LINE_COMMENT
-                  | MULTI_LINE_COMMENT
-                  | condition'''
+                  | MULTI_LINE_COMMENT'''
     p[0] = p[1]
-
 
 # Reglas de producción
 def p_statement(p):
@@ -42,7 +37,7 @@ def p_statement(p):
                  | BREAK
                  | CONTINUE
                  | function_call
-                 | statement_return'''
+                 | return_statement'''
     p[0] = p[1]
 
 
@@ -63,9 +58,9 @@ def p_arrow_function(p):
     p[0] = ('arrow_function', p[2], p[4])
 
 
-def p_statement_return(p):
-    '''statement_return : RETURN expression'''
-    p[0] = ('return', p[2])
+def p_return_statement(p):
+    '''return_statement : RETURN expression'''
+    p[0] = (p[1], p[2])
 
 
 # Gramática para INPUT
@@ -179,8 +174,16 @@ def p_factor(p):
 
 # Gramática para IF
 def p_if_statement(p):
-    'if_statement : IF parenthesized_condition block else_if_extended if_part3'
-    p[0] = (p[1], p[2], p[3], p[4], p[5])
+    '''if_statement : IF parenthesized_condition block
+                    | IF parenthesized_condition block else_if_extended
+                    | IF parenthesized_condition block else_if_extended if_part3
+                    | IF parenthesized_condition block if_part3'''
+    if len(p) == 4:
+        p[0] = (p[1], p[2], p[3])
+    elif len(p) == 5:
+        p[0] = (p[1], p[2], p[3], p[4])
+    else:
+        p[0] = (p[1], p[2], p[3], p[4], p[5])
 
 def p_else_if_extended(p):
     '''else_if_extended : if_part2
@@ -192,20 +195,12 @@ def p_else_if_extended(p):
         p[0] = p[1]
 
 def p_else_if_statement(p):
-    '''if_part2 : ELSEIF parenthesized_condition block
-                | '''
-    if len(p) == 4:
-        p[0] = (p[1], p[2], p[3])
-    else:
-        p[0] = []
+    'if_part2 : ELSEIF parenthesized_condition block'
+    p[0] = (p[1], p[2], p[3])
 
 def p_else_statement(p):
-    '''if_part3 : ELSE block
-                |'''
-    if len(p) == 3:
-        p[0] = (p[1], p[2])
-    else:
-        p[0] = []
+    'if_part3 : ELSE block'
+    p[0] = (p[1], p[2])
 
 # Gramática para WHILE
 def p_while_statement(p):
