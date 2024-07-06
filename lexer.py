@@ -90,10 +90,6 @@ reserved = {
     'float' : 'FLOAT_TYPE',
     'push': 'PUSH',
     'pop': 'POP',
-    'set': 'SET',
-    'dictionary': 'DICTIONARY',
-    'iterator': 'ITERATOR',
-    'add_child': 'ADD_CHILD',
     'lambda': 'LAMBDA',
     'return': 'RETURN',
     '=>': 'ARROW',
@@ -133,12 +129,6 @@ tokens = [
     'RPAREN',
     'KEY_VALUE',
     'DOT',
-    'APPEND',
-    'APPENDLEFT',
-    'POPLEFT',
-    'ENQUEUE',
-    'DEQUEUE',
-    'object_declaration',
     
     # Peter Miranda
     'EQUALS',
@@ -213,7 +203,6 @@ t_RIGHT_PAREN = r'\)'
 t_SEMICOLON = r'\;'
 t_COLON = r'\:'
 
-
 #DEFS
 def t_ID(t):
     r'\$[a-zA-Z_]\w*'
@@ -269,31 +258,6 @@ def t_MULTI_LINE_COMMENT(t):
     #pass
     return t
 
-def t_APPEND(t):
-    r'append'
-    return t
-
-def t_APPENDLEFT(t):
-    r'appendleft'
-    return t
-
-def t_POPLEFT(t):
-    r'popleft'
-    return t
-
-def t_ENQUEUE(t):
-    r'enqueue'
-    return t
-
-def t_DEQUEUE(t):
-    r'dequeue'
-    return t
-
-def t_object_declaration(t):
-    r'object\s+[a-zA-Z_]\w*'
-    t.type = reserved.get(t.value, 'object_declaration')
-    return t
-
 # A string containing ignored characters (spaces and tabs)
 t_ignore = ' \t\r\n'
 
@@ -311,42 +275,55 @@ lexer = lex.lex()
 data = '''
 <?php
 // Declaración de variables
-$variable1 = 10;
-$variable2 = "Hola, mundo!";
-$variable3 = true;
-// Estructura condicional
-if ($variable1 > 5) {
- echo "El número es mayor que 5";
+$name = "Juan";
+$age = 20;
+$isStudent = true;
+// Función simple
+function greet($name) {
+ return "Hola, " . $name . "!";
+}
+// Llamada a la función
+echo greet($name) . "\n";
+// Condicional
+if ($age >= 18) {
+ echo $name . " es mayor de edad.\n";
 } else {
- echo "El número es menor o igual que 5";
+ echo $name . " es menor de edad.\n";
 }
-// Bucle
+// Bucle for
 for ($i = 0; $i < 5; $i++) {
- echo "Iteración número: $i<br>";
+ echo "Número: " . $i . "\n";
 }
-// Operadores aritméticos
-$resultado = $variable1 + 3;
-echo "El resultado de la suma es: $resultado";
-// Operadores lógicos
-if ($variable3 && $variable1 == 10) {
- echo "La variable3 es verdadera y la variable1 es igual a 10";
+// Declaración de Array
+$fruits = array("manzana", "naranja", "plátano");
+// Clase y objeto
+class Person {
+ public $name;
+ public $age;
+ // Constructor
+ public function __construct($name, $age) {
+ $this->name = $name;
+ $this->age = $age;
+ }
+ // Método
+ public function introduce() {
+ return "Me llamo " . $this->name . " y tengo " . $this->age . " años.";
+ }
 }
-// Asignación
-$variable1 += 5;
-echo "El valor de variable1 después de la suma es: $variable1";
-// Arrays
-$miArray = array("manzana", "banana", "naranja");
-echo "El segundo elemento del array es: " . $miArray[1];
-// Funciones
-function miFuncion($parametro1, $parametro2) {
-    return $parametro1 * $parametro2;
+// Creación de un objeto
+$person = new Person("Ana", 25);
+echo $person->introduce() . "\n";
+// Declaración de array asociativo
+$grades = array(
+ "math" => 90,
+ "science" => 85,
+ "literature" => 88
+);
+// Función con parámetros numéricos
+function calculateArea($length, $width) {
+ return $length * $width;
 }
-echo "El resultado de la función es: " . miFuncion(2, 3);
-// While
-while ($i < 10) {
-    echo $i;
-    $i++;
-}
+echo "Área: " . calculateArea(5, 4) . "\n";
 ?>
 '''
 

@@ -24,7 +24,8 @@ def p_statement2(p):
                   | for_statement
                   | function_statement
                   | ONE_LINE_COMMENT
-                  | MULTI_LINE_COMMENT'''
+                  | MULTI_LINE_COMMENT
+                  | class_declaration'''
     p[0] = p[1]
 
 # Reglas de producción
@@ -40,28 +41,28 @@ def p_statement(p):
                  | return_statement'''
     p[0] = p[1]
 
-
 # Gramática para funciones regulares
 def p_function_statement(p):
-    '''function_statement : FUNCTION NAME LEFT_PAREN arguments RIGHT_PAREN block'''
-    p[0] = ('function', p[2], p[4], p[6])
+    '''function_statement : FUNCTION NAME LEFT_PAREN array_elements RIGHT_PAREN block
+                          | FUNCTION NAME LEFT_PAREN RIGHT_PAREN block'''
+    if len(p) == 7:
+        p[0] = ('function', p[2], p[4], p[6])
+    else:
+        p[0] = ('function', p[2], [], p[5])
    
 # Gramática para funciones lambda
 def p_lambda_function(p):
     '''lambda_function : LAMBDA arguments COLON expression'''
     p[0] = ('lambda_function', p[2], p[4])
 
-
 # Gramática para funciones de flecha
 def p_arrow_function(p):
     '''arrow_function : ARROW arguments ARROW expression'''
     p[0] = ('arrow_function', p[2], p[4])
 
-
 def p_return_statement(p):
-    '''return_statement : RETURN expression'''
+    '''return_statement : RETURN arguments'''
     p[0] = (p[1], p[2])
-
 
 # Gramática para INPUT
 ###fgets(STDIN)
@@ -89,13 +90,16 @@ def p_variable(p):
 
 # Gramática para ASIGNACION
 def p_assignment_statement(p):
-    '''assignment_statement : variable assignment_operator argument
+    '''assignment_statement : variable CALL NAME assignment_operator argument
+                            | variable assignment_operator argument
                             | variable PLUS_PLUS
                             | variable MINUS_MINUS'''
-    if len(p) == 4:
-        p[0] = ('assignment', p[1], p[2], p[3])
+    if len(p) == 6:
+        p[0] = (p[1], p[2], p[3], p[4], p[5])
+    elif len(p) == 4:
+        p[0] = (p[1], p[2], p[3])
     else:
-        p[0] = ('increment', p[1], p[2])
+        p[0] = (p[1], p[2])
 
 def p_assignment_operator(p):
     '''assignment_operator : EQUALS
@@ -134,14 +138,18 @@ def p_argument(p):
     '''argument : STRING                
                 | expression
                 | assignment_statement
+                | variable CALL NAME
+                | variable CALL function_call
+                | array
                 | function_call
                 | fgets_statement
                 | array_indexing
-                | casting argument'''
+                | casting argument
+                | object_creation'''
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = (p[1], p[2])
+        p[0] = (p[1], p[2], p[3])
 
 # Gramática para OPERACIONES + & -
 def p_expression_arithmetic(p):
@@ -321,8 +329,12 @@ def p_casting_type(p):
     p[0] = p[1]
 
 def p_function_call(p):
-    'function_call : NAME LEFT_PAREN array_elements RIGHT_PAREN'
-    p[0] = (p[1], p[3])
+    '''function_call : NAME LEFT_PAREN arguments RIGHT_PAREN
+                     | NAME LEFT_PAREN RIGHT_PAREN'''
+    if len(p) == 5:
+        p[0] = (p[1], p[3])
+    else:
+        p[0] = (p[1], [])
 
 # Gramática para ARRAYS
 def p_array_declaration_statement(p):
@@ -338,17 +350,77 @@ def p_array(p):
         p[0] = p[2]
 
 def p_array_elements(p):
-    '''array_elements : argument
-                      | array_elements COMMA argument'''
+    '''array_elements : array_argument
+                      | array_elements COMMA array_argument'''
     if len(p) == 2:
         p[0] = [p[1]]
     else:
         p[1].append(p[3])
         p[0] = p[1]
 
+# Gramática para argumentos de arrays asociativos e indexados
+def p_array_argument(p):
+    '''array_argument : argument
+                      | clave KEY_VALUE argument'''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = (p[1], p[3])
+
+def p_clave(p):
+    '''clave : STRING
+             | INTEGER'''
+    p[0] = p[1]
+
 def p_array_indexing(p):
     '''array_indexing : variable LEFT_BRACKET INTEGER RIGHT_BRACKET'''
     p[0] = ('array_indexing', p[1], p[3])
+
+def p_class_declaration(p):
+    '''class_declaration : CLASS NAME LEFT_BRACE class_statements RIGHT_BRACE
+                         | CLASS NAME LEFT_BRACE RIGHT_BRACE'''
+    if len(p) == 6:
+        p[0] = ('class', p[2], p[4])
+    else:
+        p[0] = ('class', p[2], [])
+
+def p_class_statements(p):
+    '''class_statements : class_statement
+                        | class_statements class_statement'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[2])
+        p[0] = p[1]
+
+def p_class_statement(p):
+    '''class_statement : method_declaration
+                       | property_declaration
+                       | ONE_LINE_COMMENT
+                       | MULTI_LINE_COMMENT'''
+    p[0] = p[1]
+
+def p_method_declaration(p):
+    '''method_declaration : visibility_operator function_statement'''
+    p[0] = ('method', p[1], p[2])
+
+def p_property_declaration(p):
+    '''property_declaration : visibility_operator variable SEMICOLON'''
+    p[0] = ('property', p[1], p[2])
+
+def p_visibility_operator(p):
+    '''visibility_operator : PUBLIC
+                           | PRIVATE
+                           | PROTECTED'''
+    p[0] = p[1]
+
+def p_object_creation(p):
+    '''object_creation : NEW NAME LEFT_PAREN RIGHT_PAREN
+                       | NEW NAME LEFT_PAREN arguments RIGHT_PAREN'''
+    if len(p) == 5:
+        p[0] = (p[1], p[2])
+    else:
+        p[0] = (p[1], p[2], p[4])
 
 # Gramática para ERROR MSG
 def p_error(p):
@@ -358,171 +430,6 @@ def p_error(p):
         return
     else:
         print("Syntax error at EOF")
-
-# ->Gramática para LISTAS
-def p_list(p):
-    '''list : LEFT_BRACKET elements RIGHT_BRACKET'''
-    p[0] = ('list', p[2])
-
-def p_elements(p):
-    '''elements : argument
-                | elements COMMA argument'''
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[1].append(p[3])
-        p[0] = p[1]
-
-
-# ->Gramática para STACKS
-class Stack:
-    def __init__(self):
-        self.items = []
-
-    def push(self, item):
-        self.items.append(item)
-
-    def pop(self):
-        return self.items.pop()
-
-    def is_empty(self):
-        return len(self.items) == 0
-
-def p_stack_operations(p):
-    '''stack_operations : PUSH argument
-                        | POP'''
-    if p[1] == 'push':
-        p[0] = ('stack_push', p[2])
-    else:
-        p[0] = ('stack_pop',)
-
-
-# ->Gramática para QUEUE
-from collections import deque
-class Queue:
-    def __init__(self):
-        self.items = deque()
-
-    def enqueue(self, item):
-        self.items.append(item)
-
-    def dequeue(self):
-        return self.items.popleft()
-
-    def is_empty(self):
-        return len(self.items) == 0
-
-def p_queue_operations(p):
-    '''queue_operations : ENQUEUE argument
-                        | DEQUEUE'''
-    if p[1] == 'enqueue':
-        p[0] = ('queue_enqueue', p[2])
-    else:
-        p[0] = ('queue_dequeue',)
-
-# Regla para operaciones de deque
-class Deque:
-    def __init__(self):
-        self.items = deque()
-
-    def append(self, item):
-        self.items.append(item)
-
-    def appendleft(self, item):
-        self.items.appendleft(item)
-
-    def pop(self):
-        return self.items.pop()
-
-    def popleft(self):
-        return self.items.popleft()
-
-    def is_empty(self):
-        return len(self.items) == 0
-
-def p_deque_operations(p):
-    '''deque_operations : APPEND argument
-                        | APPENDLEFT argument
-                        | POP
-                        | POPLEFT'''
-    if p[1] == 'append':
-        p[0] = ('deque_append', p[2])
-    elif p[1] == 'appendleft':
-        p[0] = ('deque_appendleft', p[2])
-    elif p[1] == 'pop':
-        p[0] = ('deque_pop',)
-    else:
-        p[0] = ('deque_popleft',)
-
-
-# ->Gramática para SETS
-def p_set_declaration(p):
-    '''set_declaration : SET LEFT_BRACE set_elements RIGHT_BRACE'''
-    p[0] = ('set_declaration', p[3])
-
-def p_set_elements(p):
-    '''set_elements : argument
-                    | set_elements COMMA argument'''
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[1].append(p[3])
-        p[0] = p[1]
-
-
-# ->Gramática para DICCIONARIOS
-def p_dictionary_declaration(p):
-    '''dictionary_declaration : DICTIONARY LEFT_BRACE dictionary_elements RIGHT_BRACE'''
-    p[0] = ('dictionary_declaration', p[3])
-
-def p_dictionary_elements(p):
-    '''dictionary_elements : key_value_pair
-                           | dictionary_elements COMMA key_value_pair'''
-    if len(p) == 2:
-        p[0] = [p[1]]
-    else:
-        p[1].append(p[3])
-        p[0] = p[1]
-
-def p_key_value_pair(p):
-    '''key_value_pair : STRING COLON argument'''
-    p[0] = (p[1], p[3])
-
-
-# ->Gramática para ITERATOR
-class CustomIterator:
-    def __init__(self, data):
-        self.index = 0
-        self.data = data
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        if self.index >= len(self.data):
-            raise StopIteration
-        value = self.data[self.index]
-        self.index += 1
-        return value
-
-def p_iterator_declaration(p):
-    '''iterator_declaration : ITERATOR LEFT_BRACKET elements RIGHT_BRACKET'''
-    p[0] = ('iterator_declaration', p[3])
-
-
-#->Gramática para TREE
-class TreeNode:
-    def __init__(self, value):
-        self.value = value
-        self.children = []
-
-    def add_child(self, child_node):
-        self.children.append(child_node)
-
-def p_tree_operations(p):
-    '''tree_operations : ADD_CHILD argument'''
-    p[0] = ('tree_add_child', p[2])
-    
 
 # Construir el parser
 parser = yacc.yacc()
@@ -535,7 +442,6 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
     result = parser.parse(data)
     for line in result:
         log_file.write(f'{line}\n')
-
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
