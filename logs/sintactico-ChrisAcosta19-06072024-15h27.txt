@@ -1,0 +1,32 @@
+Error semántico: Variable $parametro1 no ha sido inicializada
+Error semántico: $parametro1 no es un número
+Error semántico: Variable $parametro2 no ha sido inicializada
+Error semántico: $parametro2 no es un número
+Error semántico: Variable $parametro1 no ha sido inicializada
+Error semántico: $parametro1 no es un número
+Error semántico: Variable $parametro2 no ha sido inicializada
+Error semántico: $parametro2 no es un número
+// Declaración de variables
+('$variable1', '=', 10)
+('$variable2', '=', '"Hola, mundo!"')
+('$variable3', '=', 1)
+// Estructura condicional
+('if', (10, '>', 5), [('echo', ['"El número es mayor que 5"'])], ('else', [('echo', ['"El número es menor o igual que 5"'])]))
+// Bucle
+(('for', [('$i', '=', 0)]), (0, '<', 5), ([('$i', '++')], [('echo', ['"Iteración número: $i<br>"'])]))
+// Operadores aritméticos
+('$resultado', '=', (10, '+', 3))
+('echo', ['"El resultado de la suma es: $resultado"'])
+// Operadores lógicos
+('if', ('$variable3', '&&', (10, '==', 10)), [('echo', ['"La variable3 es verdadera y la variable1 es igual a 10"'])])
+// Asignación
+('$variable1', '+=', 5)
+('echo', ['"El valor de variable1 después de la suma es: $variable1"'])
+// Arrays
+('array_declaration', '$miArray', ['"manzana"', '"banana"', '"naranja"'])
+('echo', ['"El segundo elemento del array es: "', ('array_indexing', '$miArray', 1)])
+// Funciones
+('function', 'miFuncion', [], ')')
+('echo', ['"El resultado de la función es: "', ('miFuncion', [2, 3])])
+// While
+('while', (0, '<', 10), [('echo', [0]), ('$i', '++')])

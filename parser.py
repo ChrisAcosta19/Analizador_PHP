@@ -16,6 +16,14 @@ def validar_inicializacion_variables(p, lista):
             log_file.write(f"Error semántico: Variable {p[i]} no ha sido inicializada\n")
             return
 
+# Verificar si un string es un número   
+def esNumero(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
 # Gramática para el programa principal
 def p_program(p):
     '''program : OPEN_TAG statements CLOSE_TAG'''
@@ -198,7 +206,6 @@ def p_expression_arithmetic(p):
         p[0] = p[1]
     else:
         p[0] = (p[1], p[2], p[3])
-        validar_inicializacion_variables(p, [1, 3])
 
 # Gramática para OPERACIONES * / % **
 def p_term(p):
@@ -211,16 +218,33 @@ def p_term(p):
         p[0] = p[1]
     else:
         p[0] = (p[1], p[2], p[3])
-        validar_inicializacion_variables(p, [1, 3])
 
 def p_factor(p):
     '''factor : INTEGER
               | FLOAT
               | condition
+              | STRING
               | LEFT_PAREN expression RIGHT_PAREN'''
     if len(p) == 2:
+        if isinstance(p[1], str) and not (p[1].startswith('"') 
+                                          or p[1].startswith("'")
+                                          or p[1] == 'true'
+                                          or p[1] == 'false'):
+            validar_inicializacion_variables(p, [1])
+
         if isinstance(p[1], str) and p[1] in variables:
             p[0] = variables[p[1]]
+        # Regla semántica: Convertir el string a número cuando sea posible
+        elif isinstance(p[1], str) and esNumero(p[1][1:-1]):
+            p[0] = float(p[1][1:-1])
+        # Regla semántica: Convertir el string a booleano cuando sea posible
+        elif isinstance(p[1], str) and p[1] == 'true':
+            p[0] = 1
+        elif isinstance(p[1], str) and p[1] == 'false':
+            p[0] = 0
+        elif isinstance(p[1], str) and not esNumero(p[1][1:-1]):
+            log_file.write(f"Error semántico: {p[1]} no es un número\n")
+            p[0] = 0
         else:
             p[0] = p[1] 
     else:
