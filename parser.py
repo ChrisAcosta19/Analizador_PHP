@@ -71,21 +71,42 @@ def p_statement(p):
 # Gramática para funciones de la forma básica (sin argumentos por defecto)
 # Gramática para funciones con argumentos por defecto
 def p_function_statement(p):
-    '''function_statement : FUNCTION NAME LEFT_PAREN array_elements RIGHT_PAREN block
+    '''function_statement : FUNCTION NAME LEFT_PAREN parameters RIGHT_PAREN block
                           | FUNCTION NAME LEFT_PAREN RIGHT_PAREN block'''
-    if len(p) == 8:
+    if len(p) == 7:
         p[0] = ('function', p[2], p[4], p[6])
     else:
         p[0] = ('function', p[2], [], p[5])
 
 # Gramática para funciones anónimas (closures)
 def p_anonymous_function(p):
-    '''anonymous_function : FUNCTION LEFT_PAREN array_elements RIGHT_PAREN block
+    '''anonymous_function : FUNCTION LEFT_PAREN parameters RIGHT_PAREN block
                           | FUNCTION LEFT_PAREN RIGHT_PAREN block'''
     if len(p) == 6:
         p[0] = ('anonymous_function', p[3], p[5])
     else:
         p[0] = ('anonymous_function', [], p[4])
+
+def p_parameters(p):
+    '''parameters : parameter
+                  | parameters COMMA parameter'''
+    if len(p) == 2:
+        p[0] = [p[1]]
+    else:
+        p[1].append(p[3])
+        p[0] = p[1]
+
+def p_parameter(p):
+    '''parameter : variable
+                 | variable EQUALS argument'''
+    if len(p) == 2:
+        p[0] = p[1]
+        # Guardar parámetro sin valor en el diccionario
+        variables[p[1]] = None
+    else:
+        p[0] = (p[1], p[3])
+        # Guardar parámetro con valor en el diccionario
+        variables[p[1]] = p[3]
 
 def p_return_statement(p):
     '''return_statement : RETURN arguments'''
