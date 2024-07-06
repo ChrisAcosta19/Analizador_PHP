@@ -41,28 +41,41 @@ def p_statement(p):
                  | return_statement'''
     p[0] = p[1]
 
-# Gramática para funciones regulares
+# Gramática para funciones de la forma básica (sin argumentos por defecto)
+# Gramática para funciones con argumentos por defecto
 def p_function_statement(p):
     '''function_statement : FUNCTION NAME LEFT_PAREN array_elements RIGHT_PAREN block
                           | FUNCTION NAME LEFT_PAREN RIGHT_PAREN block'''
-    if len(p) == 7:
+    if len(p) == 8:
         p[0] = ('function', p[2], p[4], p[6])
     else:
         p[0] = ('function', p[2], [], p[5])
-   
-# Gramática para funciones lambda
-def p_lambda_function(p):
-    '''lambda_function : LAMBDA arguments COLON expression'''
-    p[0] = ('lambda_function', p[2], p[4])
 
-# Gramática para funciones de flecha
-def p_arrow_function(p):
-    '''arrow_function : ARROW arguments ARROW expression'''
-    p[0] = ('arrow_function', p[2], p[4])
+# Gramática para funciones anónimas (closures)
+def p_anonymous_function(p):
+    '''anonymous_function : FUNCTION LEFT_PAREN array_elements RIGHT_PAREN block
+                          | FUNCTION LEFT_PAREN RIGHT_PAREN block'''
+    if len(p) == 6:
+        p[0] = ('anonymous_function', p[3], p[5])
+    else:
+        p[0] = ('anonymous_function', [], p[4])
 
 def p_return_statement(p):
     '''return_statement : RETURN arguments'''
     p[0] = (p[1], p[2])
+
+def p_function_call(p):
+    '''function_call : function_name LEFT_PAREN arguments RIGHT_PAREN
+                     | function_name LEFT_PAREN RIGHT_PAREN'''
+    if len(p) == 5:
+        p[0] = (p[1], p[3])
+    else:
+        p[0] = (p[1], [])
+
+def p_function_name(p):
+    '''function_name : NAME
+                     | variable'''
+    p[0] = p[1]
 
 # Gramática para INPUT
 ###fgets(STDIN)
@@ -85,21 +98,22 @@ def p_variable_list(p):
         p[0] = p[1]
 
 def p_variable(p):
-    '''variable : ID'''
-    p[0] = p[1]
+    '''variable : ID
+                | ID CALL NAME'''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = (p[1], p[2], p[3])
 
 # Gramática para ASIGNACION
 def p_assignment_statement(p):
-    '''assignment_statement : variable CALL NAME assignment_operator argument
-                            | variable assignment_operator argument
+    '''assignment_statement : variable assignment_operator argument
                             | variable PLUS_PLUS
                             | variable MINUS_MINUS'''
-    if len(p) == 6:
-        p[0] = (p[1], p[2], p[3], p[4], p[5])
-    elif len(p) == 4:
-        p[0] = (p[1], p[2], p[3])
+    if len(p) == 4:
+        p[0] = (p[2], p[1], p[3])
     else:
-        p[0] = (p[1], p[2])
+        p[0] = (p[2], p[1])
 
 def p_assignment_operator(p):
     '''assignment_operator : EQUALS
@@ -137,17 +151,19 @@ def p_arguments(p):
 def p_argument(p):
     '''argument : STRING                
                 | expression
-                | assignment_statement
-                | variable CALL NAME
-                | variable CALL function_call
                 | array
-                | function_call
-                | fgets_statement
                 | array_indexing
-                | casting argument
-                | object_creation'''
+                | function_call
+                | variable CALL function_call
+                | anonymous_function
+                | assignment_statement
+                | fgets_statement
+                | object_creation
+                | casting argument'''
     if len(p) == 2:
         p[0] = p[1]
+    elif len(p) == 3:
+        p[0] = (p[1], p[2])
     else:
         p[0] = (p[1], p[2], p[3])
 
@@ -327,14 +343,6 @@ def p_casting_type(p):
     '''casting_type : INT_TYPE
                     | FLOAT_TYPE'''
     p[0] = p[1]
-
-def p_function_call(p):
-    '''function_call : NAME LEFT_PAREN arguments RIGHT_PAREN
-                     | NAME LEFT_PAREN RIGHT_PAREN'''
-    if len(p) == 5:
-        p[0] = (p[1], p[3])
-    else:
-        p[0] = (p[1], [])
 
 # Gramática para ARRAYS
 def p_array_declaration_statement(p):

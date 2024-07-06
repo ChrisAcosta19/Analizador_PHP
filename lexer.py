@@ -88,11 +88,7 @@ reserved = {
     'array' : 'ARRAY',
     'int' : 'INT_TYPE',
     'float' : 'FLOAT_TYPE',
-    'push': 'PUSH',
-    'pop': 'POP',
-    'lambda': 'LAMBDA',
-    'return': 'RETURN',
-    '=>': 'ARROW',
+    'return': 'RETURN'
 }
 
 # List of token names.   This is always required
@@ -174,8 +170,6 @@ t_CALL = r'->'
 t_KEY_VALUE = r'=>'
 t_DOT = r'\.'
 t_LOGICAL_NOT = r'!'
-t_PUSH = r'push'
-t_POP = r'pop'
 
 # Assignment Operators - PM
 t_EQUALS = r'\='
@@ -274,56 +268,62 @@ lexer = lex.lex()
 # Ejemplo de prueba
 data = '''
 <?php
-// Declaración de variables
-$name = "Juan";
-$age = 20;
-$isStudent = true;
-// Función simple
-function greet($name) {
- return "Hola, " . $name . "!";
-}
-// Llamada a la función
-echo greet($name) . "\n";
-// Condicional
-if ($age >= 18) {
- echo $name . " es mayor de edad.\n";
+// Solicitud de datos en línea de comandos
+echo "Introduce tu nombre: ";
+$name = trim(fgets(STDIN));
+echo "Introduce tu edad: ";
+$age = (int)trim(fgets(STDIN));
+echo "Introduce tu altura en metros (por ejemplo, 1.75): ";
+$height = (float)trim(fgets(STDIN));
+// Flotantes y operadores aritméticos
+$weight = 70.5; // Peso en kilogramos
+$bmi = $weight / ($height * $height); // Índice de Masa Corporal (IMC)
+echo "Hola, $name. Tu IMC es " . $bmi . ".\n";
+// Enumeraciones (simuladas con arrays)
+$colors = ["RED", "GREEN", "BLUE"];
+$favoriteColor = $colors[1]; // Asignando "GREEN"
+echo "Tu color favorito es $favoriteColor.\n";
+// Operadores lógicos y relacionales
+$isAdult = ($age >= 18);
+$isTall = ($height > 1.75);
+if ($isAdult && $isTall) {
+ echo "Eres adulto y alto.\n";
+} elseif ($isAdult && !$isTall) {
+ echo "Eres adulto pero no alto.\n";
+} elseif (!$isAdult && $isTall) {
+ echo "Eres alto pero no adulto.\n";
 } else {
- echo $name . " es menor de edad.\n";
+ echo "No eres ni adulto ni alto.\n";
 }
-// Bucle for
-for ($i = 0; $i < 5; $i++) {
- echo "Número: " . $i . "\n";
+// Operadores de asignación
+$count = 0;
+$count += 10; // Incremento en 10
+$count -= 2; // Decremento en 2
+$count *= 3; // Multiplicación por 3
+$count /= 4; // División por 4
+$count++; // Incremento en 1
+$count--; // Decremento en 1
+echo "El valor de count es $count.\n";
+/*
+ Comentarios de múltiples líneas
+ Ejemplo de bucles while y do-while
+*/
+// Bucle while
+$i = 0;
+while ($i < 3) {
+ echo "While loop iteración: $i\n";
+ $i++;
 }
-// Declaración de Array
-$fruits = array("manzana", "naranja", "plátano");
-// Clase y objeto
-class Person {
- public $name;
- public $age;
- // Constructor
- public function __construct($name, $age) {
- $this->name = $name;
- $this->age = $age;
- }
- // Método
- public function introduce() {
- return "Me llamo " . $this->name . " y tengo " . $this->age . " años.";
- }
-}
-// Creación de un objeto
-$person = new Person("Ana", 25);
-echo $person->introduce() . "\n";
-// Declaración de array asociativo
-$grades = array(
- "math" => 90,
- "science" => 85,
- "literature" => 88
-);
-// Función con parámetros numéricos
-function calculateArea($length, $width) {
- return $length * $width;
-}
-echo "Área: " . calculateArea(5, 4) . "\n";
+// Otros operadores relacionales
+$a = 5;
+$b = 10;
+$c = 5;
+echo "a == b: " . var_export($a == $b, true) . "\n"; // false
+echo "a != b: " . var_export($a != $b, true) . "\n"; // true
+echo "a < b: " . var_export($a < $b, true) . "\n"; // true
+echo "a > b: " . var_export($a > $b, true) . "\n"; // false
+echo "a <= c: " . var_export($a <= $c, true) . "\n"; // true
+echo "a >= c: " . var_export($a >= $c, true) . "\n"; // true
 ?>
 '''
 
