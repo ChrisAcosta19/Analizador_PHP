@@ -51,6 +51,11 @@ def p_statement(p):
                  | CONTINUE
                  | function_call
                  | return_statement
+                 | array_indexing
+                 | array_add_element
+                 | array_modify_element
+                 | array_remove_element
+                 | array_count_elements
                  | expression'''
     p[0] = p[1]
 
@@ -404,6 +409,22 @@ def p_clave(p):
 def p_array_indexing(p):
     '''array_indexing : variable LEFT_BRACKET INTEGER RIGHT_BRACKET'''
     p[0] = ('array_indexing', p[1], p[3])
+
+def p_array_add_element(p):
+    '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
+    p[0] = ('array_add_element', p[1], p[5])
+
+def p_array_modify_element(p):
+    '''array_modify_element : variable LEFT_BRACKET INTEGER RIGHT_BRACKET EQUALS argument'''
+    p[0] = ('array_modify_element', p[1], p[3], p[6])
+
+def p_array_remove_element(p):
+    '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET INTEGER RIGHT_BRACKET RIGHT_PAREN'''
+    p[0] = ('array_remove_element', p[3], p[5])
+
+def p_array_count_elements(p):
+    '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
+    p[0] = ('array_count_elements', p[3])
 
 def p_class_declaration(p):
     '''class_declaration : CLASS NAME LEFT_BRACE class_statements RIGHT_BRACE
