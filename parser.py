@@ -4,6 +4,18 @@ from datetime import datetime
 from lexer import tokens, data, logs_dir, git_username
 global log_file
 
+# Agregar las variables declaradas en un diccionario
+variables = {}
+
+# Regla semántica: Verificar si una variable ha sido inicializada
+def validar_inicializacion_variables(p, lista):
+    for i in lista:
+        if not isinstance(p[i], str) or p[i] in variables:
+            pass
+        else:
+            log_file.write(f"Error semántico: Variable {p[i]} no ha sido inicializada\n")
+            return
+
 def p_program(p):
     '''program : OPEN_TAG statements CLOSE_TAG'''
     p[0] = p[2]
@@ -38,7 +50,8 @@ def p_statement(p):
                  | BREAK
                  | CONTINUE
                  | function_call
-                 | return_statement'''
+                 | return_statement
+                 | expression'''
     p[0] = p[1]
 
 # Gramática para funciones de la forma básica (sin argumentos por defecto)
@@ -111,9 +124,10 @@ def p_assignment_statement(p):
                             | variable PLUS_PLUS
                             | variable MINUS_MINUS'''
     if len(p) == 4:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = (p[1], p[2], p[3])
+        variables[p[1]] = p[3] # Guardar el valor de la variable
     else:
-        p[0] = (p[2], p[1])
+        p[0] = (p[1], p[2])
 
 def p_assignment_operator(p):
     '''assignment_operator : EQUALS
@@ -175,16 +189,20 @@ def p_expression_arithmetic(p):
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = (p[1], p[2], p[3])
+        validar_inicializacion_variables(p, [1, 3])
 
 def p_term(p):
     '''term : term TIMES factor
             | term DIVIDE factor
+            | term MOD factor
+            | term POWER factor
             | factor'''
     if len(p) == 2:
         p[0] = p[1]
     else:
-        p[0] = (p[2], p[1], p[3])
+        p[0] = (p[1], p[2], p[3])
+        validar_inicializacion_variables(p, [1, 3])
 
 def p_factor(p):
     '''factor : INTEGER
@@ -192,7 +210,10 @@ def p_factor(p):
               | condition
               | LEFT_PAREN expression RIGHT_PAREN'''
     if len(p) == 2:
-        p[0] = p[1]
+        if isinstance(p[1], str) and p[1] in variables:
+            p[0] = variables[p[1]]
+        else:
+            p[0] = p[1] 
     else:
         p[0] = p[2]
 
@@ -307,7 +328,7 @@ def p_negated_condition(p):
 
 def p_complex_condition(p):
     'complex_condition : condition logical_operator condition'
-    p[0] = (p[2], p[1], p[3])
+    p[0] = (p[1], p[2], p[3])
 
 def p_parenthesized_condition(p):
     'parenthesized_condition : LEFT_PAREN condition RIGHT_PAREN'
@@ -315,7 +336,7 @@ def p_parenthesized_condition(p):
 
 def p_relational_expression(p):
     '''relational_expression : expression relational_operator expression'''
-    p[0] = (p[2], p[1], p[3])
+    p[0] = (p[1], p[2], p[3])
 
 def p_relational_operator(p):
     '''relational_operator : EQUAL_TO
