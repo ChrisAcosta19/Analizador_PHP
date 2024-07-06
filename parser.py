@@ -16,10 +16,12 @@ def validar_inicializacion_variables(p, lista):
             log_file.write(f"Error semántico: Variable {p[i]} no ha sido inicializada\n")
             return
 
+# Gramática para el programa principal
 def p_program(p):
     '''program : OPEN_TAG statements CLOSE_TAG'''
     p[0] = p[2]
 
+# Gramática para lista de sentencias
 def p_statements(p):
     '''statements : statement2
                   | statements statement2'''
@@ -40,7 +42,6 @@ def p_statement2(p):
                   | class_declaration'''
     p[0] = p[1]
 
-# Reglas de producción
 def p_statement(p):
     '''statement : print_statement
                  | fscanf_statement
@@ -82,6 +83,7 @@ def p_return_statement(p):
     '''return_statement : RETURN arguments'''
     p[0] = (p[1], p[2])
 
+# Gramática para llamadas a funciones
 def p_function_call(p):
     '''function_call : function_name LEFT_PAREN arguments RIGHT_PAREN
                      | function_name LEFT_PAREN RIGHT_PAREN'''
@@ -96,12 +98,12 @@ def p_function_name(p):
     p[0] = p[1]
 
 # Gramática para INPUT
-###fgets(STDIN)
+## fgets(STDIN)
 def p_fgets_statement(p):
     '''fgets_statement : FGETS LEFT_PAREN STDIN RIGHT_PAREN'''
     p[0] = (p[1], p[3])
 
-###fscanf(STDIN, "formato", $variables...)
+## fscanf(STDIN, "formato", $variables...)
 def p_fscanf_statement(p):
     '''fscanf_statement : FSCANF LEFT_PAREN STDIN COMMA STRING COMMA variable_list RIGHT_PAREN'''
     p[0] = (p[1], p[3], p[5], p[7])
@@ -115,6 +117,7 @@ def p_variable_list(p):
         p[1].append(p[3])
         p[0] = p[1]
 
+# Gramática para VARIABLES
 def p_variable(p):
     '''variable : ID
                 | ID CALL NAME'''
@@ -197,6 +200,7 @@ def p_expression_arithmetic(p):
         p[0] = (p[1], p[2], p[3])
         validar_inicializacion_variables(p, [1, 3])
 
+# Gramática para OPERACIONES * / % **
 def p_term(p):
     '''term : term TIMES factor
             | term DIVIDE factor
@@ -222,7 +226,7 @@ def p_factor(p):
     else:
         p[0] = p[2]
 
-# Gramática para IF
+# Gramática para IF, IF-ELSE, IF-ELSEIF, IF-ELSEIF-ELSE
 def p_if_statement(p):
     '''if_statement : IF parenthesized_condition block
                     | IF parenthesized_condition block else_if_extended
@@ -305,6 +309,7 @@ def p_statement_list(p):
         p[1].append(p[3])
         p[0] = p[1]
 
+# Gramática para bloques de código
 def p_block(p):
     '''block : LEFT_BRACE statements RIGHT_BRACE
              | LEFT_BRACE RIGHT_BRACE'''
@@ -313,6 +318,7 @@ def p_block(p):
     else:
         p[0] = []
 
+# Gramática para condiciones
 def p_condition(p):
     '''condition : simple_condition
                  | negated_condition
@@ -361,6 +367,7 @@ def p_logical_operator(p):
                         | LOGICAL_XOR'''
     p[0] = p[1]
 
+# Gramática para conversión de tipos
 def p_casting(p):
     'casting : LEFT_PAREN casting_type RIGHT_PAREN'
     p[0] = p[2]
@@ -406,8 +413,9 @@ def p_clave(p):
              | INTEGER'''
     p[0] = p[1]
 
+# Funciones de arrays
 def p_array_indexing(p):
-    '''array_indexing : variable LEFT_BRACKET INTEGER RIGHT_BRACKET'''
+    '''array_indexing : variable LEFT_BRACKET clave RIGHT_BRACKET'''
     p[0] = ('array_indexing', p[1], p[3])
 
 def p_array_add_element(p):
@@ -415,17 +423,18 @@ def p_array_add_element(p):
     p[0] = ('array_add_element', p[1], p[5])
 
 def p_array_modify_element(p):
-    '''array_modify_element : variable LEFT_BRACKET INTEGER RIGHT_BRACKET EQUALS argument'''
+    '''array_modify_element : variable LEFT_BRACKET clave RIGHT_BRACKET EQUALS argument'''
     p[0] = ('array_modify_element', p[1], p[3], p[6])
 
 def p_array_remove_element(p):
-    '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET INTEGER RIGHT_BRACKET RIGHT_PAREN'''
+    '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
     p[0] = ('array_remove_element', p[3], p[5])
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
     p[0] = ('array_count_elements', p[3])
 
+# Gramática para CLASES
 def p_class_declaration(p):
     '''class_declaration : CLASS NAME LEFT_BRACE class_statements RIGHT_BRACE
                          | CLASS NAME LEFT_BRACE RIGHT_BRACE'''

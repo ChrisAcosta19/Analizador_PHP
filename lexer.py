@@ -269,11 +269,11 @@ lexer = lex.lex()
 # Ejemplo de prueba
 data = '''
 <?php
-$lista[1];
-$lista[1] = "mundo";
-$lista[] = 42;
-unset($lista[2]);
-count($lista);
+$diccionario["edad"];
+$diccionario["edad"] = 31;
+$diccionario["país"] = "España";
+unset($diccionario["ciudad"]);
+count($diccionario);
 ?>
 '''
 
