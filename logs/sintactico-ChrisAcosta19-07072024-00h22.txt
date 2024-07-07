@@ -21,4 +21,4 @@
 ('function', 'miFuncion', ['$parametro1', '$parametro2'], [('return', [(None, '*', None)])])
 ('echo', ['"El resultado de la función es: "', ('miFuncion', [2, 3])])
 // While
-('while', (0, '<', 10), [('echo', [0]), ('$i', '++')])
+('while', (1, '<', 10), [('echo', [1]), ('$i', '++')])

@@ -8,14 +8,14 @@ global log_file
 # Agregar las variables declaradas en un diccionario
 variables = {}
 
-# Regla semántica: Verificar si una variable ha sido inicializada
+# Regla semántica: Una variable debe ser inicializada antes de ser usada
 def validar_inicializacion_variables(p, lista):
     for i in lista:
         if not isinstance(p[i], str) or p[i] in variables:
-            pass
+            return True
         else:
             log_file.write(f"Error semántico: Variable {p[i]} no ha sido inicializada\n")
-            return
+            return False
 
 # Verificar si un string es un número   
 def esNumero(s):
@@ -163,9 +163,54 @@ def p_assignment_statement(p):
                             | variable MINUS_MINUS'''
     if len(p) == 4:
         p[0] = (p[1], p[2], p[3])
-        variables[p[1]] = p[3] # Guardar el valor de la variable
+
+        if p[2] == '=':
+            variables[p[1]] = p[3]
+        elif isinstance(p[3], str):
+            # Regla semántica: Solo se puede usar +=, -=, *=, /=, %= con números
+            log_file.write(f"Error semántico: {p[3]} no es un número, por lo que no se puede usar +=, -=, *=, /=, %= para modificar una variable\n")
+        else:
+            existe = validar_inicializacion_variables(p, [1])
+            if not existe:
+                return
+            else:
+                if isinstance(variables[p[1]], str):
+                    if esNumero(variables[p[1]][1:-1]):
+                        variables[p[1]] = float(variables[p[1]][1:-1])
+                    else:
+                        # Regla semántica: La variable a hacerle operaciones debe ser un número
+                        log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer +=, -=, *=, /=, %= sobre ella\n")
+                        return
+
+                if p[2] == '+=':
+                    variables[p[1]] += p[3]
+                elif p[2] == '-=':
+                    variables[p[1]] -= p[3]
+                elif p[2] == '*=':
+                    variables[p[1]] *= p[3]
+                elif p[2] == '/=':
+                    variables[p[1]] /= p[3]
+                else:
+                    variables[p[1]] %= p[3]
     else:
         p[0] = (p[1], p[2])
+
+        existe = validar_inicializacion_variables(p, [1])
+        if not existe:
+            return
+        else:
+            if isinstance(variables[p[1]], str):
+                if esNumero(variables[p[1]][1:-1]):
+                    variables[p[1]] = float(variables[p[1]][1:-1])
+                else:
+                    # Regla semántica: La variable a hacerle incremento o decremento debe ser un número
+                    log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer ++ o -- sobre ella\n")
+                    return
+
+            if p[2] == '++':
+                variables[p[1]] += 1
+            else:
+                variables[p[1]] -= 1
 
 def p_assignment_operator(p):
     '''assignment_operator : EQUALS
@@ -247,30 +292,28 @@ def p_factor(p):
               | condition
               | STRING
               | LEFT_PAREN expression RIGHT_PAREN'''
-    if len(p) == 2:
-        if isinstance(p[1], str) and not (p[1].startswith('"') 
-                                          or p[1].startswith("'")
-                                          or p[1] == 'true'
-                                          or p[1] == 'false'):
-            validar_inicializacion_variables(p, [1])
-
-        if isinstance(p[1], str) and p[1] in variables:
-            p[0] = variables[p[1]]
-        # Regla semántica: Convertir el string a número cuando sea posible
-        elif isinstance(p[1], str) and esNumero(p[1][1:-1]):
-            p[0] = float(p[1][1:-1])
-        # Regla semántica: Convertir el string a booleano cuando sea posible
-        elif isinstance(p[1], str) and p[1] == 'true':
-            p[0] = 1
-        elif isinstance(p[1], str) and p[1] == 'false':
-            p[0] = 0
-        elif isinstance(p[1], str) and not esNumero(p[1][1:-1]):
-            log_file.write(f"Error semántico: {p[1]} no es un número\n")
-            p[0] = 0
-        else:
-            p[0] = p[1] 
-    else:
+    if len(p) == 4:
         p[0] = p[2]
+    else:
+        if not isinstance(p[1], str):
+            p[0] = p[1]
+        else:        
+            # Regla semántica: Convertir el string a número cuando sea posible en una expresión aritmética
+            if esNumero(p[1][1:-1]):
+                p[0] = float(p[1][1:-1])
+            # Regla semántica: Convertir el booleano a entero cuando sea posible en una expresión aritmética
+            elif p[1] == 'true':
+                p[0] = 1
+            elif p[1] == 'false':
+                p[0] = 0
+            elif p[1].startswith('"') or p[1].startswith("'"):
+                # Regla semántica: No se pueden hacer operaciones aritméticas con strings
+                log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no puede usarse en expresiones aritméticas\n")
+                p[0] = 0
+            elif validar_inicializacion_variables(p, [1]):
+                p[0] = variables[p[1]]
+            else:
+                p[0] = p[1]
 
 # Gramática para IF, IF-ELSE, IF-ELSEIF, IF-ELSEIF-ELSE
 def p_if_statement(p):
