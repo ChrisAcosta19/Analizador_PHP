@@ -36,4 +36,11 @@ while ($i < 10) {
     echo $i;
     $i++;
 }
+// Arrays
+$lista = array(1, "hola", 3.14, true);
+$lista[1];
+$lista[1] = "mundo";
+$lista[] = 42;
+unset($lista[2]);
+count($lista);
 ?>
