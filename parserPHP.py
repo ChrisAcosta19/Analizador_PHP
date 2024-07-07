@@ -1,7 +1,8 @@
 import os
 import ply.yacc as yacc
 from datetime import datetime
-from lexer import tokens, data, logs_dir, git_username
+from lexerPHP import tokens, logs_dir, git_username
+from test import data
 global log_file
 
 # Agregar las variables declaradas en un diccionario
@@ -549,5 +550,3 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
-
-# type: ignore
