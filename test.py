@@ -32,11 +32,30 @@ echo "El segundo elemento del array es: " . $miArray[1];
 function miFuncion($parametro1, $parametro2) {
     return $parametro1 * $parametro2;
 }
-echo "El resultado de la función es: " . miFuncion(2, 3);
+
+function miFuncion($parametro1, $parametro2) {
+    return $parametro1 * $parametro2;
+}
+
+function sumarNumeros($n1, $n2) {
+    return $n1 * $n2;
+}
+
+$resultado = sumarNumeros(2,2,3);
+multiplicarNumeros(2,2);
+
+
 // While
 while ($i < 10) {
     echo $i;
     $i++;
 }
+// Arrays
+$lista = array(1, "hola", 3.14, true);
+$lista[1];
+$lista[1] = "mundo";
+$lista[] = 42;
+unset($lista[2]);
+count($lista);
 ?>
 '''
