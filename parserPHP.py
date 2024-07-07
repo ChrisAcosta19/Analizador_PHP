@@ -9,13 +9,12 @@ global log_file
 variables = {}
 
 # Regla semántica: Una variable debe ser inicializada antes de ser usada
-def validar_inicializacion_variables(p, lista):
-    for i in lista:
-        if not isinstance(p[i], str) or p[i] in variables:
-            return True
-        else:
-            log_file.write(f"Error semántico: Variable {p[i]} no ha sido inicializada\n")
-            return False
+def validar_inicializacion_variables(p, indice):
+    if not isinstance(p[indice], str) or p[indice] in variables:
+        return True
+    else:
+        log_file.write(f"Error semántico: Variable {p[indice]} no ha sido inicializada\n")
+        return False
 
 # Verificar si un string es un número   
 def esNumero(s):
@@ -170,15 +169,12 @@ def p_assignment_statement(p):
             # Regla semántica: Solo se puede usar +=, -=, *=, /=, %= con números
             log_file.write(f"Error semántico: {p[3]} no es un número, por lo que no se puede usar +=, -=, *=, /=, %= para modificar una variable\n")
         else:
-            existe = validar_inicializacion_variables(p, [1])
-            if not existe:
-                return
-            else:
+            if validar_inicializacion_variables(p, 1):
                 if isinstance(variables[p[1]], str):
                     if esNumero(variables[p[1]][1:-1]):
                         variables[p[1]] = float(variables[p[1]][1:-1])
                     else:
-                        # Regla semántica: La variable a hacerle operaciones debe ser un número
+                        # Regla semántica: La variable a hacerle +=, -=, *=, /=, %= debe ser un número
                         log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer +=, -=, *=, /=, %= sobre ella\n")
                         return
 
@@ -195,10 +191,7 @@ def p_assignment_statement(p):
     else:
         p[0] = (p[1], p[2])
 
-        existe = validar_inicializacion_variables(p, [1])
-        if not existe:
-            return
-        else:
+        if validar_inicializacion_variables(p, 1):
             if isinstance(variables[p[1]], str):
                 if esNumero(variables[p[1]][1:-1]):
                     variables[p[1]] = float(variables[p[1]][1:-1])
@@ -295,25 +288,30 @@ def p_factor(p):
     if len(p) == 4:
         p[0] = p[2]
     else:
-        if not isinstance(p[1], str):
-            p[0] = p[1]
-        else:        
-            # Regla semántica: Convertir el string a número cuando sea posible en una expresión aritmética
+        p[0] = p[1]
+
+        if isinstance(p[1], str):
+            # Regla semántica: Convertir un string a número cuando sea posible en una expresión aritmética
             if esNumero(p[1][1:-1]):
                 p[0] = float(p[1][1:-1])
-            # Regla semántica: Convertir el booleano a entero cuando sea posible en una expresión aritmética
+            # Regla semántica: Convertir un booleano a entero en una expresión aritmética
             elif p[1] == 'true':
                 p[0] = 1
             elif p[1] == 'false':
                 p[0] = 0
+            # Regla semántica: No se pueden hacer operaciones aritméticas con strings que no sean números
             elif p[1].startswith('"') or p[1].startswith("'"):
-                # Regla semántica: No se pueden hacer operaciones aritméticas con strings
                 log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no puede usarse en expresiones aritméticas\n")
                 p[0] = 0
-            elif validar_inicializacion_variables(p, [1]):
-                p[0] = variables[p[1]]
-            else:
-                p[0] = p[1]
+            # Regla semántica: Una variable debe contener un número o un string que sea un número para ser usada en una expresión aritmética
+            # Nota: una expresión aritmética o condición se consideran números por el cálculo de su resultado
+            elif validar_inicializacion_variables(p, 1):
+                if not isinstance(variables[p[1]], str):
+                    p[0] = variables[p[1]]
+                elif esNumero(variables[p[1]][1:-1]):
+                    p[0] = float(variables[p[1]][1:-1])
+                else:
+                    log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no puede usarse en expresiones aritméticas\n")
 
 # Gramática para IF, IF-ELSE, IF-ELSEIF, IF-ELSEIF-ELSE
 def p_if_statement(p):
@@ -470,6 +468,7 @@ def p_casting_type(p):
 def p_array_declaration_statement(p):
     '''array_declaration_statement : variable EQUALS array'''
     p[0] = ('array_declaration', p[1], p[3])
+    variables[p[1]] = ('array_declaration', p[3])
 
 def p_array(p):
     '''array : ARRAY LEFT_PAREN array_elements RIGHT_PAREN
@@ -502,26 +501,46 @@ def p_clave(p):
              | INTEGER'''
     p[0] = p[1]
 
+def esArray(p, indice):
+    if validar_inicializacion_variables(p, indice):
+        valor = variables[p[indice]]
+        if isinstance(valor, tuple):
+            return valor[0] == 'array_declaration'
+    return False
+
 # Funciones de arrays
+# Regla semántica: Solo se pueden indexar, añadir, modificar, 
+# remover y contar elementos a variables que contengan un array.
+
 def p_array_indexing(p):
     '''array_indexing : variable LEFT_BRACKET clave RIGHT_BRACKET'''
     p[0] = ('array_indexing', p[1], p[3])
+    if not esArray(p, 1):
+        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella\n")
 
 def p_array_add_element(p):
     '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
     p[0] = ('array_add_element', p[1], p[5])
+    if not esArray(p, 1):
+        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede agregar elementos sobre ella\n")
 
 def p_array_modify_element(p):
     '''array_modify_element : variable LEFT_BRACKET clave RIGHT_BRACKET EQUALS argument'''
     p[0] = ('array_modify_element', p[1], p[3], p[6])
+    if not esArray(p, 1):
+        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella\n")
 
 def p_array_remove_element(p):
     '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
     p[0] = ('array_remove_element', p[3], p[5])
+    if not esArray(p, 3):
+        log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella\n")
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
     p[0] = ('array_count_elements', p[3])
+    if not esArray(p, 3):
+        log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede contar elementos sobre ella\n")
 
 # Gramática para CLASES
 def p_class_declaration(p):
