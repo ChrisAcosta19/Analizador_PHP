@@ -524,20 +524,6 @@ def p_array_elements(p):
         p[1].append(p[3])
         p[0] = p[1]
 
-# Verificar si el índice está dentro de los límites del array
-def validar_indice(p, array_name, indice):
-    if array_name in variables and isinstance(variables[array_name], tuple) and variables[array_name][0] == 'array_declaration':
-        array = variables[array_name][1]
-        if isinstance(indice, int) and 0 <= indice < len(array):
-            return True
-        else:
-            log_file.write(f"Error semántico: Índice {indice} fuera de los límites del array {array_name}\n")
-            return False
-    else:
-        log_file.write(f"Error semántico: {array_name} no es un array\n")
-        return False
-
-
 # Gramática para argumentos de arrays asociativos e indexados
 def p_array_argument(p):
     '''array_argument : argument
@@ -559,22 +545,25 @@ def esArray(p, indice):
             return valor[0] == 'array_declaration'
     return False
 
-#validar clave
-def validar_clave(p, array_name, clave):
-    if array_name in variables and isinstance(variables[array_name], tuple) and variables[array_name][0] == 'array_declaration':
-        array = variables[array_name][1]
-        if isinstance(array, dict):
-            if clave in array:
-                return True
-            else:
-                log_file.write(f"Error semántico: La clave '{clave}' no existe en el array asociativo {array_name}\n")
-                return False
-        else:
-            log_file.write(f"Error semántico: {array_name} no es un array asociativo\n")
-            return False
+# Verificar si el índice está dentro de los límites del array
+def validar_indice(array_name, indice):
+    array = variables[array_name][1]
+    if 0 <= indice < len(array):
+        return True
     else:
-        log_file.write(f"Error semántico: {array_name} no es un array\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: Índice {indice} fuera de los límites del array {array_name}"]
         return False
+
+# Verificar si la clave existe en el array asociativo
+def validar_clave(array_name, clave):
+    array = variables[array_name][1]
+    for element in array:
+        if isinstance(element, tuple) and element[0] == clave:
+            return True
+    global errores_semanticos
+    errores_semanticos += [f"Error semántico: La clave '{clave}' no existe en el array asociativo {array_name}"]
+    return False
 
 # Funciones de arrays
 # Regla semántica: Solo se pueden indexar, añadir, modificar, 
@@ -587,12 +576,12 @@ def p_array_indexing(p):
         global errores_semanticos
         errores_semanticos += [f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella"]
     else:
-        if isinstance(p[3], int):  # Si es índice numérico, validar límites
-            if not validar_indice(p, p[1], p[3]):
-                p[0] = None
-        else:  # Si es clave asociativa, validar existencia de clave
-            if not validar_clave(p, p[1], p[3]):
-                p[0] = None
+        # Si es índice numérico, validar límites
+        if isinstance(p[3], int) and validar_indice(p[1], p[3]):  
+            return
+        # Si es clave asociativa, validar existencia de clave
+        if validar_clave(p[1], p[3]):
+            errores_semanticos.pop()
 
 def p_array_add_element(p):
     '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
@@ -608,12 +597,12 @@ def p_array_modify_element(p):
         global errores_semanticos
         errores_semanticos += [f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella"]
     else:
-        if isinstance(p[3], int):  # Si es índice numérico, validar límites
-            if not validar_indice(p, p[1], p[3]):
-                p[0] = None
-        else:  # Si es clave asociativa, validar existencia de clave
-            if not validar_clave(p, p[1], p[3]):
-                p[0] = None
+        # Si es índice numérico, validar límites
+        if isinstance(p[3], int) and validar_indice(p[1], p[3]):  
+            return
+        # Si es clave asociativa, validar existencia de clave
+        if validar_clave(p[1], p[3]):
+            errores_semanticos.pop()
 
 def p_array_remove_element(p):
     '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
@@ -622,12 +611,12 @@ def p_array_remove_element(p):
         global errores_semanticos
         errores_semanticos += [f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella"]
     else:
-        if isinstance(p[5], int):  # Si es índice numérico, validar límites
-            if not validar_indice(p, p[3], p[5]):
-                p[0] = None
-        else:  # Si es clave asociativa, validar existencia de clave
-            if not validar_clave(p, p[3], p[5]):
-                p[0] = None
+        # Si es índice numérico, validar límites
+        if isinstance(p[3], int) and validar_indice(p[1], p[3]):  
+            return
+        # Si es clave asociativa, validar existencia de clave
+        if validar_clave(p[1], p[3]):
+            errores_semanticos.pop()
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''

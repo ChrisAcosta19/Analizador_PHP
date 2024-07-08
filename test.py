@@ -20,5 +20,8 @@ function saludar() {
     return "Hola mundo";
 }
 echo saludar(5);
+$lista = array("1" => 2, 2, 3);
+$lista["hola"];
+$lista[3];
 ?>
 '''
