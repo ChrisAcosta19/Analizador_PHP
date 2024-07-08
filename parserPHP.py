@@ -487,6 +487,20 @@ def p_array_elements(p):
         p[1].append(p[3])
         p[0] = p[1]
 
+# Verificar si el índice está dentro de los límites del array
+def validar_indice(p, array_name, indice):
+    if array_name in variables and isinstance(variables[array_name], tuple) and variables[array_name][0] == 'array_declaration':
+        array = variables[array_name][1]
+        if isinstance(indice, int) and 0 <= indice < len(array):
+            return True
+        else:
+            log_file.write(f"Error semántico: Índice {indice} fuera de los límites del array {array_name}\n")
+            return False
+    else:
+        log_file.write(f"Error semántico: {array_name} no es un array\n")
+        return False
+
+
 # Gramática para argumentos de arrays asociativos e indexados
 def p_array_argument(p):
     '''array_argument : argument
@@ -517,6 +531,10 @@ def p_array_indexing(p):
     p[0] = ('array_indexing', p[1], p[3])
     if not esArray(p, 1):
         log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella\n")
+    else:
+        indice = p[3] if isinstance(p[3], int) else int(p[3][1:-1])
+        if not validar_indice(p, p[1], indice):
+            p[0] = None
 
 def p_array_add_element(p):
     '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
@@ -529,12 +547,20 @@ def p_array_modify_element(p):
     p[0] = ('array_modify_element', p[1], p[3], p[6])
     if not esArray(p, 1):
         log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella\n")
+    else:
+        indice = p[3] if isinstance(p[3], int) else int(p[3][1:-1])
+        if not validar_indice(p, p[1], indice):
+            p[0] = None
 
 def p_array_remove_element(p):
     '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
     p[0] = ('array_remove_element', p[3], p[5])
     if not esArray(p, 3):
         log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella\n")
+    else:
+        indice = p[5] if isinstance(p[5], int) else int(p[5][1:-1])
+        if not validar_indice(p, p[3], indice):
+            p[0] = None
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
