@@ -551,6 +551,23 @@ def esArray(p, indice):
             return valor[0] == 'array_declaration'
     return False
 
+#validar clave
+def validar_clave(p, array_name, clave):
+    if array_name in variables and isinstance(variables[array_name], tuple) and variables[array_name][0] == 'array_declaration':
+        array = variables[array_name][1]
+        if isinstance(array, dict):
+            if clave in array:
+                return True
+            else:
+                log_file.write(f"Error semántico: La clave '{clave}' no existe en el array asociativo {array_name}\n")
+                return False
+        else:
+            log_file.write(f"Error semántico: {array_name} no es un array asociativo\n")
+            return False
+    else:
+        log_file.write(f"Error semántico: {array_name} no es un array\n")
+        return False
+
 # Funciones de arrays
 # Regla semántica: Solo se pueden indexar, añadir, modificar, 
 # remover y contar elementos a variables que contengan un array.
@@ -561,9 +578,12 @@ def p_array_indexing(p):
     if not esArray(p, 1):
         log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella\n")
     else:
-        indice = p[3] if isinstance(p[3], int) else int(p[3][1:-1])
-        if not validar_indice(p, p[1], indice):
-            p[0] = None
+        if isinstance(p[3], int):  # Si es índice numérico, validar límites
+            if not validar_indice(p, p[1], p[3]):
+                p[0] = None
+        else:  # Si es clave asociativa, validar existencia de clave
+            if not validar_clave(p, p[1], p[3]):
+                p[0] = None
 
 def p_array_add_element(p):
     '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
@@ -577,9 +597,12 @@ def p_array_modify_element(p):
     if not esArray(p, 1):
         log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella\n")
     else:
-        indice = p[3] if isinstance(p[3], int) else int(p[3][1:-1])
-        if not validar_indice(p, p[1], indice):
-            p[0] = None
+        if isinstance(p[3], int):  # Si es índice numérico, validar límites
+            if not validar_indice(p, p[1], p[3]):
+                p[0] = None
+        else:  # Si es clave asociativa, validar existencia de clave
+            if not validar_clave(p, p[1], p[3]):
+                p[0] = None
 
 def p_array_remove_element(p):
     '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
@@ -587,9 +610,12 @@ def p_array_remove_element(p):
     if not esArray(p, 3):
         log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella\n")
     else:
-        indice = p[5] if isinstance(p[5], int) else int(p[5][1:-1])
-        if not validar_indice(p, p[3], indice):
-            p[0] = None
+        if isinstance(p[5], int):  # Si es índice numérico, validar límites
+            if not validar_indice(p, p[3], p[5]):
+                p[0] = None
+        else:  # Si es clave asociativa, validar existencia de clave
+            if not validar_clave(p, p[3], p[5]):
+                p[0] = None
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
