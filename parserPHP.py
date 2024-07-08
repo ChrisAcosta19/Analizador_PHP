@@ -1,13 +1,14 @@
 import os
 import ply.yacc as yacc
 from datetime import datetime
-from lexerPHP import tokens, logs_dir, git_username
+from lexerPHP import tokens, logs_dir, git_username, reserved
 from test import data
 global log_file
 
 # Agregar las variables declaradas en un diccionario
 variables = {}
 defined_functions = {}
+php_functions = ['trim', 'var_export']
 
 # Regla semántica: Una variable debe ser inicializada antes de ser usada
 def validar_inicializacion_variables(p, indice):
@@ -84,6 +85,9 @@ def check_function_definition(func_name, params, block):
 
 # Función para verificar la llamada a una función
 def check_function_call(func_name, args):
+    if func_name in php_functions:
+        return True
+
     if func_name not in defined_functions:
         log_file.write(f"Error semántico: La función '{func_name}' no está definida.\n")
         return False
@@ -93,19 +97,17 @@ def check_function_call(func_name, args):
     if len(args) != len(expected_params):
         log_file.write(f"Error semántico: La función '{func_name}' espera {len(expected_params)} argumentos, se encontraron {len(args)}.\n")
         return False
-    
     return True
 
-
-
 def p_function_statement(p):
-    '''function_statement : FUNCTION NAME LEFT_PAREN parameters RIGHT_PAREN block'''
-    func_name = p[2]
-    params = p[4]
-    block = p[6]
-    
-    if check_function_definition(func_name, params, block):
-        p[0] = ('function', func_name, params, block)
+    '''function_statement : FUNCTION NAME LEFT_PAREN parameters RIGHT_PAREN block
+                          | FUNCTION NAME LEFT_PAREN RIGHT_PAREN block'''
+    if len(p) == 7:
+        check_function_definition(p[2], p[4], p[6])
+        p[0] = ('function', p[2], p[4], p[6])
+    else:
+        check_function_definition(p[2], [], p[5])
+        p[0] = ('function', p[2], [], p[5])
 
 
 # Gramática para funciones anónimas (closures)
@@ -144,12 +146,14 @@ def p_return_statement(p):
 
 # Gramática para llamadas a funciones
 def p_function_call(p):
-    '''function_call : NAME LEFT_PAREN arguments RIGHT_PAREN'''
-    func_name = p[1]
-    args = p[3]
-    
-    if check_function_call(func_name, args):
-        p[0] = ('function_call', func_name, args)
+    '''function_call : NAME LEFT_PAREN arguments RIGHT_PAREN
+                     | NAME LEFT_PAREN RIGHT_PAREN'''
+    if len(p) == 5:    
+        check_function_call(p[1], p[3])
+        p[0] = ('function_call', p[1], p[3])
+    else:
+        check_function_call(p[1], [])
+        p[0] = ('function_call', p[1], [])
 
 # Gramática para INPUT
 ## fgets(STDIN)
@@ -269,7 +273,7 @@ def p_argument(p):
                 | array
                 | array_indexing
                 | function_call
-                | variable CALL function_call
+                | ID CALL function_call
                 | anonymous_function
                 | assignment_statement
                 | fgets_statement
