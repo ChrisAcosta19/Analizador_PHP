@@ -1,21 +1,26 @@
 import os
 import ply.yacc as yacc
 from datetime import datetime
-from lexerPHP import tokens, logs_dir, git_username, reserved
+from lexerPHP import tokens, logs_dir, git_username
 from test import data
 global log_file
 
 # Agregar las variables declaradas en un diccionario
 variables = {}
+# Agregar las funciones definidas en un diccionario
 defined_functions = {}
+# Agregar las funciones de PHP en un arreglo
 php_functions = ['trim', 'var_export']
+# Agregar los errores semánticos en un arreglo
+errores_semanticos = []
 
 # Regla semántica: Una variable debe ser inicializada antes de ser usada
 def validar_inicializacion_variables(p, indice):
+    global errores_semanticos
     if not isinstance(p[indice], str) or p[indice] in variables:
         return True
     else:
-        log_file.write(f"Error semántico: Variable {p[indice]} no ha sido inicializada\n")
+        errores_semanticos += [f"Error semántico: Variable {p[indice]} no ha sido inicializada"]
         return False
 
 # Verificar si un string es un número   
@@ -74,7 +79,8 @@ def p_statement(p):
 # Función para verificar la definición de una función
 def check_function_definition(func_name, params, block):
     if func_name in defined_functions:
-        log_file.write(f"Error semántico: La función '{func_name}' ya ha sido definida.\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: La función '{func_name}' ya ha sido definida."]
         return False
     
     defined_functions[func_name] = {
@@ -85,17 +91,18 @@ def check_function_definition(func_name, params, block):
 
 # Función para verificar la llamada a una función
 def check_function_call(func_name, args):
+    global errores_semanticos
     if func_name in php_functions:
         return True
 
     if func_name not in defined_functions:
-        log_file.write(f"Error semántico: La función '{func_name}' no está definida.\n")
+        errores_semanticos += [f"Error semántico: La función '{func_name}' no está definida."]
         return False
     
     # Regla_Semantica = El numero de argumentos debe ser igual al numero de parametros de la funcion definida.
     expected_params = defined_functions[func_name]['params']
     if len(args) != len(expected_params):
-        log_file.write(f"Error semántico: La función '{func_name}' espera {len(expected_params)} argumentos, se encontraron {len(args)}.\n")
+        errores_semanticos += [f"Error semántico: La función '{func_name}' espera {len(expected_params)} argumentos, se encontraron {len(args)}."]
         return False
     return True
 
@@ -189,6 +196,7 @@ def p_assignment_statement(p):
     '''assignment_statement : variable assignment_operator argument
                             | variable PLUS_PLUS
                             | variable MINUS_MINUS'''
+    global errores_semanticos
     if len(p) == 4:
         p[0] = (p[1], p[2], p[3])
 
@@ -196,7 +204,7 @@ def p_assignment_statement(p):
             variables[p[1]] = p[3]
         elif isinstance(p[3], str):
             # Regla semántica: Solo se puede usar +=, -=, *=, /=, %= con números
-            log_file.write(f"Error semántico: {p[3]} no es un número, por lo que no se puede usar +=, -=, *=, /=, %= para modificar una variable\n")
+            errores_semanticos += [f"Error semántico: {p[3]} no es un número, por lo que no se puede usar +=, -=, *=, /=, %= para modificar una variable"]
         else:
             if validar_inicializacion_variables(p, 1):
                 if isinstance(variables[p[1]], str):
@@ -204,7 +212,7 @@ def p_assignment_statement(p):
                         variables[p[1]] = float(variables[p[1]][1:-1])
                     else:
                         # Regla semántica: La variable a hacerle +=, -=, *=, /=, %= debe ser un número
-                        log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer +=, -=, *=, /=, %= sobre ella\n")
+                        errores_semanticos += [f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer +=, -=, *=, /=, %= sobre ella"]
                         return
 
                 if p[2] == '+=':
@@ -226,7 +234,7 @@ def p_assignment_statement(p):
                     variables[p[1]] = float(variables[p[1]][1:-1])
                 else:
                     # Regla semántica: La variable a hacerle incremento o decremento debe ser un número
-                    log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer ++ o -- sobre ella\n")
+                    errores_semanticos += [f"Error semántico: {p[1]} no es un número, por lo que no se puede hacer ++ o -- sobre ella"]
                     return
 
             if p[2] == '++':
@@ -318,7 +326,7 @@ def p_factor(p):
         p[0] = p[2]
     else:
         p[0] = p[1]
-
+        global errores_semanticos
         if isinstance(p[1], str):
             # Regla semántica: Convertir un string a número cuando sea posible en una expresión aritmética
             if esNumero(p[1][1:-1]):
@@ -330,7 +338,7 @@ def p_factor(p):
                 p[0] = 0
             # Regla semántica: No se pueden hacer operaciones aritméticas con strings que no sean números
             elif p[1].startswith('"') or p[1].startswith("'"):
-                log_file.write(f"Error semántico: {p[1]} no es un número, por lo que no puede usarse en expresiones aritméticas\n")
+                errores_semanticos += [f"Error semántico: {p[1]} no es un número, por lo que no puede usarse en expresiones aritméticas"]
                 p[0] = 0
             # Regla semántica: Una variable debe contener un número o un string que sea un número para ser usada en una expresión aritmética
             # Nota: una expresión aritmética o condición se consideran números por el cálculo de su resultado
@@ -545,31 +553,36 @@ def p_array_indexing(p):
     '''array_indexing : variable LEFT_BRACKET clave RIGHT_BRACKET'''
     p[0] = ('array_indexing', p[1], p[3])
     if not esArray(p, 1):
-        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: {p[1]} no es un array, por lo que no se puede hacer indexing sobre ella"]
 
 def p_array_add_element(p):
     '''array_add_element : variable LEFT_BRACKET RIGHT_BRACKET EQUALS argument'''
     p[0] = ('array_add_element', p[1], p[5])
     if not esArray(p, 1):
-        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede agregar elementos sobre ella\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: {p[1]} no es un array, por lo que no se puede agregar elementos sobre ella"]
 
 def p_array_modify_element(p):
     '''array_modify_element : variable LEFT_BRACKET clave RIGHT_BRACKET EQUALS argument'''
     p[0] = ('array_modify_element', p[1], p[3], p[6])
     if not esArray(p, 1):
-        log_file.write(f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: {p[1]} no es un array, por lo que no se puede modificar elementos sobre ella"]
 
 def p_array_remove_element(p):
     '''array_remove_element : UNSET LEFT_PAREN variable LEFT_BRACKET clave RIGHT_BRACKET RIGHT_PAREN'''
     p[0] = ('array_remove_element', p[3], p[5])
     if not esArray(p, 3):
-        log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella"]
 
 def p_array_count_elements(p):
     '''array_count_elements : COUNT LEFT_PAREN variable RIGHT_PAREN'''
     p[0] = ('array_count_elements', p[3])
     if not esArray(p, 3):
-        log_file.write(f"Error semántico: {p[3]} no es un array, por lo que no se puede contar elementos sobre ella\n")
+        global errores_semanticos
+        errores_semanticos += [f"Error semántico: {p[3]} no es un array, por lo que no se puede contar elementos sobre ella"]
 
 # Gramática para CLASES
 def p_class_declaration(p):
@@ -638,6 +651,20 @@ with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_f
     result = parser.parse(data)
     for line in result:
         log_file.write(f'{line}\n')
+
+# Mensaje de confirmación
+print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
+
+# Generar nombre de archivo de log basado en la fecha y hora actual
+log_file_name = datetime.now().strftime(f'semantico-{git_username}-%d%m%Y-%Hh%M.txt')
+
+# Abrir archivo de log para escritura en la carpeta 'logs'
+with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
+    if len(errores_semanticos) > 0:
+        for error in errores_semanticos:
+            log_file.write(f'{error}\n')
+    else:
+        log_file.write('No se encontraron errores semánticos.')
 
 # Mensaje de confirmación
 print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
