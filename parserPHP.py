@@ -26,8 +26,12 @@ def esNumero(s):
 
 # Gramática para el programa principal
 def p_program(p):
-    '''program : OPEN_TAG statements CLOSE_TAG'''
-    p[0] = p[2]
+    '''program : OPEN_TAG statements CLOSE_TAG
+               | OPEN_TAG CLOSE_TAG'''
+    if len(p) == 4:
+        p[0] = p[2]
+    else:
+        p[0] = (p[1], p[2])
 
 # Gramática para lista de sentencias
 def p_statements(p):
@@ -707,8 +711,9 @@ def analizar_sintactico(data):
     global log_file
     with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:    
         result = parser.parse(data)
-        for line in result:
-            log_file.write(f'{line}\n')
+        if result:
+            for line in result:
+                log_file.write(f'{line}\n')
 
     # Mensaje de confirmación
     print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
