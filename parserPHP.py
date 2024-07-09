@@ -709,11 +709,14 @@ def analizar_sintactico(data):
 
     # Abrir archivo de log para escritura en la carpeta 'logs'
     global log_file
-    with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:    
-        result = parser.parse(data)
-        if result:
-            for line in result:
-                log_file.write(f'{line}\n')
+    with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
+        try:
+            result = parser.parse(data)
+            if result:
+                for line in result:
+                    log_file.write(f'{line}\n')
+        except Exception as e:
+            log_file.write(f'Error: {e} El análisis léxico encontró caracteres que no son tokens válidos.\n')
 
     # Mensaje de confirmación
     print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')

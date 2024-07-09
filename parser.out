@@ -1,70 +1,5 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    ABSTRACT
-    AS
-    ASYNC
-    AWAIT
-    BOOL
-    CALLABLE
-    CASE
-    CATCH
-    CLONE
-    COLON
-    CONST
-    DECLARE
-    DEFAULT
-    DIE
-    DO
-    EMPTY
-    ENDDECLARE
-    ENDFOR
-    ENDFOREACH
-    ENDIF
-    ENDSWITCH
-    ENDWHILE
-    ENUM
-    EVAL
-    EXIT
-    EXTENDS
-    FINAL
-    FINALLY
-    FN
-    FOREACH
-    GLOBAL
-    GOTO
-    HALT_COMPILER
-    IMPLEMENTS
-    INCLUDE
-    INCLUDE_ONCE
-    INSTANCEOF
-    INSTEADOF
-    INTERFACE
-    ISSET
-    ITERABLE
-    LIST
-    LPAREN
-    MATCH
-    MIXED
-    NAMESPACE
-    NULL
-    OBJECT
-    REQUIRE
-    REQUIRE_ONCE
-    RPAREN
-    SELF
-    STATIC
-    SWITCH
-    THROW
-    TRAIT
-    TRY
-    USE
-    VAR
-    VOID
-    YIELD
-    YIELD_FROM
-
 Grammar
 
 Rule 0     S' -> program
@@ -234,105 +169,57 @@ Rule 163   object_creation -> NEW NAME LEFT_PAREN arguments RIGHT_PAREN
 
 Terminals, with rules where they appear
 
-ABSTRACT             : 
 ARRAY                : 136
-AS                   : 
-ASYNC                : 
-AWAIT                : 
-BOOL                 : 
 BREAK                : 18
 CALL                 : 44 66
-CALLABLE             : 
-CASE                 : 
-CATCH                : 
 CLASS                : 149 150
-CLONE                : 
 CLOSE_TAG            : 1 2
-COLON                : 
 COMMA                : 33 40 40 42 60 103 105 139
-CONST                : 
 CONTINUE             : 19
 COUNT                : 148
-DECLARE              : 
-DEFAULT              : 
-DIE                  : 
 DIFFERENT            : 128
 DIVIDE               : 76
 DIVIDE_EQUALS        : 52
-DO                   : 
 DOT                  : 59
 ECHO                 : 57
 ELSE                 : 92
 ELSEIF               : 91
-EMPTY                : 
-ENDDECLARE           : 
-ENDFOR               : 
-ENDFOREACH           : 
-ENDIF                : 
-ENDSWITCH            : 
-ENDWHILE             : 
-ENUM                 : 
 EQUALS               : 35 48 135 145 146
 EQUAL_TO             : 120
-EVAL                 : 
-EXIT                 : 
-EXTENDS              : 
 FALSE                : 113
 FGETS                : 39
-FINAL                : 
-FINALLY              : 
 FLOAT                : 81
 FLOAT_TYPE           : 134
-FN                   : 
 FOR                  : 94 95
-FOREACH              : 
 FSCANF               : 40
 FUNCTION             : 28 29 30 31
-GLOBAL               : 
-GOTO                 : 
 GREATER_EQUAL        : 125
 GREATER_THAN         : 123
-HALT_COMPILER        : 
 ID                   : 43 44 66
 IDENTICAL_TO         : 126
 IF                   : 85 86 87 88
-IMPLEMENTS           : 
-INCLUDE              : 
-INCLUDE_ONCE         : 
-INSTANCEOF           : 
-INSTEADOF            : 
 INTEGER              : 80 143
-INTERFACE            : 
 INT_TYPE             : 133
-ISSET                : 
-ITERABLE             : 
 KEY_VALUE            : 141
 LEFT_BRACE           : 106 107 149 150
 LEFT_BRACKET         : 137 144 145 146 147
 LEFT_PAREN           : 28 29 30 31 37 38 39 40 54 84 94 95 118 132 136 147 148 162 163
 LESS_EQUAL           : 124
 LESS_THAN            : 122
-LIST                 : 
 LOGICAL_AND          : 129
 LOGICAL_NOT          : 116
 LOGICAL_OR           : 130
 LOGICAL_XOR          : 131
-LPAREN               : 
-MATCH                : 
 MINUS                : 73
 MINUS_EQUALS         : 50
 MINUS_MINUS          : 47
-MIXED                : 
 MOD                  : 77
 MOD_EQUALS           : 53
 MULTI_LINE_COMMENT   : 11 156
 NAME                 : 28 29 37 38 44 149 150 162 163
-NAMESPACE            : 
 NEW                  : 162 163
 NOT_EQUAL_TO         : 121
 NOT_IDENTICAL_TO     : 127
-NULL                 : 
-OBJECT               : 
 ONE_LINE_COMMENT     : 10 155
 OPEN_TAG             : 1 2
 PLUS                 : 72
@@ -343,32 +230,18 @@ PRINT                : 56
 PRIVATE              : 160
 PROTECTED            : 161
 PUBLIC               : 159
-REQUIRE              : 
-REQUIRE_ONCE         : 
 RETURN               : 36
 RIGHT_BRACE          : 106 107 149 150
 RIGHT_BRACKET        : 137 144 145 146 147
 RIGHT_PAREN          : 28 29 30 31 37 38 39 40 54 84 98 99 118 132 136 147 148 162 163
-RPAREN               : 
-SELF                 : 
 SEMICOLON            : 5 94 95 98 99 101 158
-STATIC               : 
 STDIN                : 39 40
 STRING               : 40 61 83 142
-SWITCH               : 
-THROW                : 
 TIMES                : 75
 TIMES_EQUALS         : 51
-TRAIT                : 
 TRUE                 : 112
-TRY                  : 
 UNSET                : 147
-USE                  : 
-VAR                  : 
-VOID                 : 
 WHILE                : 93
-YIELD                : 
-YIELD_FROM           : 
 error                : 
 
 Nonterminals, with rules where they appear
