@@ -1,18 +1,11 @@
 import os
 import ply.yacc as yacc
 from datetime import datetime
-from lexerPHP import tokens, logs_dir, git_username
-from test import data
-global log_file
+from lexerPHP import tokens, analizar_lexico
+#from test import data
 
-# Agregar las variables declaradas en un diccionario
-variables = {}
-# Agregar las funciones definidas en un diccionario
-defined_functions = {}
 # Agregar las funciones de PHP en un arreglo
 php_functions = ['trim', 'var_export']
-# Agregar los errores semánticos en un arreglo
-errores_semanticos = []
 
 # Regla semántica: Una variable debe ser inicializada antes de ser usada
 def validar_inicializacion_variables(p, indice):
@@ -612,7 +605,7 @@ def p_array_remove_element(p):
         errores_semanticos += [f"Error semántico: {p[3]} no es un array, por lo que no se puede eliminar elementos sobre ella"]
     else:
         # Si es índice numérico, validar límites
-        if isinstance(p[3], int) and validar_indice(p[1], p[3]):  
+        if isinstance(p[5], int) and validar_indice(p[3], p[5]):  
             return
         # Si es clave asociativa, validar existencia de clave
         if validar_clave(p[1], p[3]):
@@ -675,37 +668,64 @@ def p_object_creation(p):
 # Gramática para ERROR MSG
 def p_error(p):
     if p:
-        print(f"Syntax error at token {p}")
-        log_file.write(f'{p}\n')
+        log_file.write(f'Syntax error at token {p}\n')
         return
     else:
-        print("Syntax error at EOF")
+        log_file.write("Syntax error at EOF\n")
 
-# Construir el parser
-parser = yacc.yacc()
+# Obtener la ubicación del script actual
+script_dir = os.path.dirname(__file__)
 
-# Generar nombre de archivo de log basado en la fecha y hora actual
-log_file_name = datetime.now().strftime(f'sintactico-{git_username}-%d%m%Y-%Hh%M.txt')
-
-# Abrir archivo de log para escritura en la carpeta 'logs'
-with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
-    result = parser.parse(data)
-    for line in result:
-        log_file.write(f'{line}\n')
-
-# Mensaje de confirmación
-print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
+# Crear carpeta 'logs' en la misma ubicación que el script
+logs_dir = os.path.join(script_dir, 'logs')
+if not os.path.exists(logs_dir):
+    os.makedirs(logs_dir)
 
 # Generar nombre de archivo de log basado en la fecha y hora actual
-log_file_name = datetime.now().strftime(f'semantico-{git_username}-%d%m%Y-%Hh%M.txt')
+git_username = "ChrisAcosta19"
 
-# Abrir archivo de log para escritura en la carpeta 'logs'
-with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
-    if len(errores_semanticos) > 0:
-        for error in errores_semanticos:
-            log_file.write(f'{error}\n')
-    else:
-        log_file.write('No se encontraron errores semánticos.')
+def analizar_sintactico(data):
+    analizar_lexico(data)
+    # Agregar las variables declaradas en un diccionario
+    global variables
+    variables = {}
+    # Agregar las funciones definidas en un diccionario
+    global defined_functions
+    defined_functions = {}
 
-# Mensaje de confirmación
-print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
+    # Agregar los errores semánticos en un arreglo
+    global errores_semanticos
+    errores_semanticos = []
+
+    # Construir el parser
+    parser = yacc.yacc()
+
+    # log_file_name = datetime.now().strftime(f'sintactico-{git_username}-%d%m%Y-%Hh%M.txt')
+    log_file_name = 'sintactico.txt'
+
+    # Abrir archivo de log para escritura en la carpeta 'logs'
+    global log_file
+    with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:    
+        result = parser.parse(data)
+        for line in result:
+            log_file.write(f'{line}\n')
+
+    # Mensaje de confirmación
+    print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
+
+def analizar_semantico(data):
+    analizar_sintactico(data)
+
+    # log_file_name = datetime.now().strftime(f'semantico-{git_username}-%d%m%Y-%Hh%M.txt')
+    log_file_name = 'semantico.txt'
+
+    # Abrir archivo de log para escritura en la carpeta 'logs'
+    with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
+        if len(errores_semanticos) > 0:
+            for error in errores_semanticos:
+                log_file.write(f'{error}\n')
+        else:
+            log_file.write('No se encontraron errores semánticos.')
+
+    # Mensaje de confirmación
+    print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')

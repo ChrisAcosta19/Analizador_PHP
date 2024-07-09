@@ -1,8 +1,7 @@
 import os
 from datetime import datetime
 import ply.lex as lex
-from test import data
-global log_file
+#from test import data
 
 reserved = {
     '__halt_compiler': 'HALT_COMPILER',
@@ -223,7 +222,7 @@ def t_newline(t):
 
 # Jefferson Eras
 def t_STRING(t):
-    r'(\'[^\'\\]*(\\.[^\\]*)*\')|("[^"\\]*(\\.[^\\]*)*")'
+    r'(?:(?:"[^"\\]*(?:\\.[^"\\]*)*")|(?:\'[^\'\\]*(?:\\.[^\'\\]*)*\'))'
     return t
 
 def t_LOGICAL_AND(t):
@@ -246,12 +245,10 @@ def t_NAME(t):
 #def PM
 def t_ONE_LINE_COMMENT(t):
     r'//.*'
-    #pass
     return t
     
 def t_MULTI_LINE_COMMENT(t):
     r'/\*((?s:.*?))\*/'
-    #pass
     return t
 
 # A string containing ignored characters (spaces and tabs)
@@ -263,33 +260,37 @@ def t_error(t):
     log_file.write(error_message + '\n')
     t.lexer.skip(1)
 
-# Build the lexer
-lexer = lex.lex()
+def analizar_lexico(data):
+    # Build the lexer
+    lexer = lex.lex()
 
-# Obtener la ubicación del script actual
-script_dir = os.path.dirname(__file__)
+    # Obtener la ubicación del script actual
+    script_dir = os.path.dirname(__file__)
 
-# Crear carpeta 'logs' en la misma ubicación que el script
-logs_dir = os.path.join(script_dir, 'logs')
-if not os.path.exists(logs_dir):
-    os.makedirs(logs_dir)
+    # Crear carpeta 'logs' en la misma ubicación que el script
+    logs_dir = os.path.join(script_dir, 'logs')
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
 
-# Generar nombre de archivo de log basado en la fecha y hora actual
-git_username = "ChrisAcosta19"
-log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
+    # Generar nombre de archivo de log basado en la fecha y hora actual
+    git_username = "ChrisAcosta19"
 
-# Abrir archivo de log para escritura en la carpeta 'logs'
-with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
-    # Darle al lexer la entrada
-    lexer.input(data)
+    # log_file_name = datetime.now().strftime(f'lexico-{git_username}-%d%m%Y-%Hh%M.txt')
+    log_file_name = 'lexico.txt'
 
-    # Tokenizar
-    while True:
-        tok = lexer.token()
-        if not tok:
-            break      # No hay más entrada
-        # Escribir token en archivo de log
-        log_file.write(f'{tok}\n')
+    # Abrir archivo de log para escritura en la carpeta 'logs'
+    global log_file
+    with open(os.path.join(logs_dir, log_file_name), 'w', encoding='UTF-8') as log_file:
+        # Darle al lexer la entrada
+        lexer.input(data)
 
-# Mensaje de confirmación
-print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
+        # Tokenizar
+        while True:
+            tok = lexer.token()
+            if not tok:
+                break      # No hay más entrada
+            # Escribir token en archivo de log
+            log_file.write(f'{tok}\n')
+
+    # Mensaje de confirmación
+    print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
