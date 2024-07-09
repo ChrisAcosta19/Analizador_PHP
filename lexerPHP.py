@@ -181,7 +181,7 @@ def t_NAME(t):
 
 #def PM
 def t_ONE_LINE_COMMENT(t):
-    r'//.*'
+    r'//.*|\#.*'
     return t
     
 def t_MULTI_LINE_COMMENT(t):
@@ -193,8 +193,9 @@ t_ignore = ' \t\r\n'
 
 # Error handling rule
 def t_error(t):
+    etiqueta = 'Error Léxico: '
     error_message = "Carácter inesperado '%s' en la linea %d, columna %d" % (t.value[0], t.lexer.lineno, t.lexer.lexpos)
-    log_file.write(error_message + '\n')
+    log_file.write(f'{etiqueta}{error_message}\n')
     t.lexer.skip(1)
 
 def analizar_lexico(data):
