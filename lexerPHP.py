@@ -189,13 +189,11 @@ def t_MULTI_LINE_COMMENT(t):
     return t
 
 # A string containing ignored characters (spaces and tabs)
-t_ignore = ' \t\r\n'
+t_ignore = ' \t'
 
 # Error handling rule
 def t_error(t):
-    etiqueta = 'Error Léxico: '
-    error_message = "Carácter inesperado '%s' en la linea %d, columna %d" % (t.value[0], t.lexer.lineno, t.lexer.lexpos)
-    log_file.write(f'{etiqueta}{error_message}\n')
+    log_file.write("Error Léxico: Carácter inesperado '%s' en la linea %d, columna %d\n" % (t.value[0], t.lexer.lineno, t.lexer.lexpos))
     t.lexer.skip(1)
 
 def analizar_lexico(data):

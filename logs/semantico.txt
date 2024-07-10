@@ -1,1 +1,16 @@
-No se encontraron errores semánticos.
+Error semántico: Variable $var1 no ha sido inicializada
+Error semántico: $var2 no es un número, por lo que no se puede hacer +=, -=, *=, /=, %= sobre ella
+Error semántico: "mundo" no es un número, por lo que no se puede usar +=, -=, *=, /=, %= para modificar una variable
+Error semántico: $var2 no es un número, por lo que no se puede hacer ++ o -- sobre ella
+Error semántico: "cadena" no es un número, por lo que no puede usarse en expresiones aritméticas
+Error semántico: $var2 no es un array, por lo que no se puede hacer indexing sobre ella
+Error semántico: $var2 no es un array, por lo que no se puede agregar elementos sobre ella
+Error semántico: $var2 no es un array, por lo que no se puede modificar elementos sobre ella
+Error semántico: $var2 no es un array, por lo que no se puede eliminar elementos sobre ella
+Error semántico: $var2 no es un array, por lo que no se puede contar elementos sobre ella
+Error semántico: La función 'saludar' no está definida.
+Error semántico: La función 'saludar' ya ha sido definida.
+Error semántico: La función 'saludar' espera 0 argumentos, se encontraron 1.
+Error semántico: La clave '"hola"' no existe en el array asociativo $lista
+Error semántico: Índice 3 fuera de los límites del array $lista
+Error semántico: La clave '3' no existe en el array asociativo $lista
