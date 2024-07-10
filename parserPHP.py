@@ -671,11 +671,12 @@ def p_object_creation(p):
 
 # Gramática para ERROR MSG
 def p_error(p):
+    global errores_semanticos
     if p:
         log_file.write(f'Syntax error at token {p}\n')
-        return
     else:
         log_file.write("Syntax error at EOF\n")
+    errores_semanticos += ['Error: Revisar resultados del análisis sintáctico']
 
 # Obtener la ubicación del script actual
 script_dir = os.path.dirname(__file__)
@@ -717,6 +718,7 @@ def analizar_sintactico(data):
                     log_file.write(f'{line}\n')
         except Exception as e:
             log_file.write(f'Error: {e} El análisis léxico encontró caracteres que no son tokens válidos.\n')
+            errores_semanticos += ['Error: Revisar resultados del análisis sintáctico']
 
     # Mensaje de confirmación
     print(f'Archivo de log generado: {log_file_name} en la carpeta\n {logs_dir}.')
