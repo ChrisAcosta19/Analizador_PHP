@@ -1,7 +1,8 @@
 from parserPHP import analizar_sintactico, analizar_semantico
 from lexerPHP import analizar_lexico
+from help import info
 import sys, os
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QMenuBar, QTextEdit, QPushButton, QGroupBox, QLabel, QStatusBar
+from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QMenuBar, QTextEdit, QPushButton, QLabel, QStatusBar, QStackedWidget, QAction
 from PyQt5.QtCore import QTimer
 
 class MainWindow(QMainWindow):
@@ -12,16 +13,28 @@ class MainWindow(QMainWindow):
 
         # Menú
         menubar = self.menuBar()
-        menu_principal = menubar.addMenu('Menu Principal')
-        menu_ayuda = menubar.addMenu('Ayuda')
+        menu_principal_action = QAction('Menu Principal', self)
+        menu_principal_action.triggered.connect(self.mostrar_principal)
+        ayuda_action = QAction('Ayuda', self)
+        ayuda_action.triggered.connect(self.mostrar_ayuda)
+        
+        menubar.addAction(menu_principal_action)
+        menubar.addAction(ayuda_action)
 
-        # Layout principal
-        main_layout = QVBoxLayout()
+        # Widget apilado
+        self.stacked_widget = QStackedWidget()
+        self.setCentralWidget(self.stacked_widget)
+
+        # Página principal
+        self.principal_widget = QWidget()
+        self.principal_layout = QVBoxLayout()
+        self.principal_widget.setLayout(self.principal_layout)
+        self.stacked_widget.addWidget(self.principal_widget)
 
         # Área de texto
         self.text_area = QTextEdit()
         self.text_area.setPlaceholderText('Escriba su expresión aquí...')
-        main_layout.addWidget(self.text_area)
+        self.principal_layout.addWidget(self.text_area)
 
         # Botones
         button_layout = QHBoxLayout()
@@ -46,13 +59,13 @@ class MainWindow(QMainWindow):
         button_layout.addWidget(btn_semantico)
         button_layout.addWidget(btn_limpiar)
 
-        main_layout.addLayout(button_layout)
+        self.principal_layout.addLayout(button_layout)
 
         # Output
         self.output_area = QTextEdit()
         self.output_area.setReadOnly(True)
-        main_layout.addWidget(QLabel('Output'))
-        main_layout.addWidget(self.output_area)
+        self.principal_layout.addWidget(QLabel('Output'))
+        self.principal_layout.addWidget(self.output_area)
 
         # Estado
         self.status_bar = QStatusBar()
@@ -61,13 +74,16 @@ class MainWindow(QMainWindow):
         # Labels de estado y tipo de análisis
         self.estado_label = QLabel('Estado: Listo')
         self.tipo_analisis_label = QLabel('Tipo Análisis: N/A')
-        main_layout.addWidget(self.estado_label)
-        main_layout.addWidget(self.tipo_analisis_label)
+        self.principal_layout.addWidget(self.estado_label)
+        self.principal_layout.addWidget(self.tipo_analisis_label)
 
-        # Configurar layout central
-        central_widget = QWidget()
-        central_widget.setLayout(main_layout)
-        self.setCentralWidget(central_widget)
+        # Página de ayuda
+        self.ayuda_widget = QWidget()
+        ayuda_layout = QVBoxLayout()
+        ayuda_text = QLabel(info)
+        ayuda_layout.addWidget(ayuda_text)
+        self.ayuda_widget.setLayout(ayuda_layout)
+        self.stacked_widget.addWidget(self.ayuda_widget)
 
     def actualizar_estado(self):
         self.estado_label.setText('Estado: Listo')
@@ -116,6 +132,12 @@ class MainWindow(QMainWindow):
             for line in log_file:
                 resultado.append(line.strip())
         return resultado
+
+    def mostrar_principal(self):
+        self.stacked_widget.setCurrentWidget(self.principal_widget)
+
+    def mostrar_ayuda(self):
+        self.stacked_widget.setCurrentWidget(self.ayuda_widget)
 
 app = QApplication(sys.argv)
 window = MainWindow()
